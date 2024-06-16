@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}
+    welcome
+{% endblock %}
+
+{% block content %}
+    <section class="py-5 text-center container">
+        <h1 class="display-4 m-5">Newest Item</h1>
+
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for item in items %}
+            <div class="card p-3" >
+                <!--     goes to item details page      -->
+
+<!--                <a href="">-->
+                <!--                    -->
+                {#<img src="{{ item.image.url }}" class="card-img-top" alt="image" height="100px"> #}
+                <div class="card-body">
+                    <h2 class="card-title display-6">{{ item[4] }}</h2>
+                <p class="card-text">Price: {{ item[5] }}</p>
+
+                </div>
+                </a>
+            </div>
+        {% endfor %}
+        </div>
+    </section>
+<!--    <section class="py-5 text-center container">-->
+<!--        <h1 class="display-4 m-5"> Categories</h1>-->
+<!--        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">-->
+<!--            {% for category in categories %}-->
+<!--                <div class="card p-3" >-->
+<!--                    <div class="card-body">-->
+<!--                        <h2 class="card-title display-6">{{ category.name }}</h2>-->
+<!--                    <p class="card-text"> {{ category.items.count }} items</p>-->
+
+<!--                    </div>-->
+<!--                </div>-->
+<!--            {% endfor %}-->
+<!--        </div>-->
+<!--    </section>-->
+{% endblock %}
+
