@@ -46,8 +46,9 @@ def home():
     # TODO: complete navbar for home page and filter advertises
     if session['id'] is not None:
         user_city = execute_read_query("SELECT City FROM NormalUser WHERE UserID = {}".format(session['id']))
-        ads = execute_read_query("SELECT * FROM Advertise WHERE Advertise.City = '{}'".format(user_city[0][0]))
-        return render_template('home.html', items=ads[-10:])
+        ads = execute_read_query("SELECT * FROM Advertise WHERE Advertise.City = '{}' Order BY CreatedAt ".format(user_city[0][0]))
+        recentAds = execute_read_query("SELECT * FROM divar.Advertise Order BY CreatedAt")
+        return render_template('home.html', items=recentAds[0:10])
     else:
         return redirect(url_for('index'))
 
@@ -99,3 +100,8 @@ def sign_up():
                 return redirect(url_for('sign_up'))
     else:   # GET
         return render_template("signup.html", cities=cities)
+
+#
+# @app.route("/update/", methods=['GET', 'POST'])
+# def update_profile():
+#
