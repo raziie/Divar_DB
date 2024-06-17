@@ -2,7 +2,7 @@ from app import app
 from flask import render_template, request, url_for, flash, redirect, session, g
 import mysql.connector
 from datetime import datetime
-from app.input_handler import handle_null_int, handle_null_str
+from app.input_handler import *
 import dotenv
 import os
 
@@ -60,7 +60,6 @@ def sign_up():
                 "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)")
 
     if request.method == 'POST':
-        # TODO: ask if one time password is needed for sign up too
         in_f_name = handle_null_str(request.form['inFName'])
         in_l_name = handle_null_str(request.form['inLName'])
         in_phone = handle_null_str(request.form['inPhone'])
@@ -69,15 +68,23 @@ def sign_up():
         in_street = handle_null_str(request.form['inStreet'])
         in_house_num = handle_null_int(request.form['inHouseNum'])
 
-        # TODO: Add in input handler check Email and Phone and House number to be int
-
         data_n_user = (1, in_f_name, in_l_name, datetime.now().strftime("%Y-%m-%d %H:%M:%S"), in_email,
                        in_phone, in_city, in_street, in_house_num)
 
+        # Check all invalid and incomplete user data
         if not in_email and not in_phone:
             flash('One of Email or Phone is required!')
             return redirect(url_for('sign_up'))
-        if in_street is None and in_house_num is not None:
+        elif not in_f_name or not in_l_name:
+            flash('You should enter yor name completely!')
+            return redirect(url_for('sign_up'))
+        elif not email_checker(in_email):
+            flash("Invalid Email")
+            return redirect(url_for('sign_up'))
+        elif not phone_checker(in_phone):
+            flash("Invalid Phone Number")
+            return redirect(url_for('sign_up'))
+        elif in_street is None and in_house_num is not None:
             flash('Please enter street name!')
             return redirect(url_for('sign_up'))
         else:
