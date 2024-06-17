@@ -58,7 +58,7 @@ def home():
 @app.route("/signup/", methods=['GET', 'POST'])
 def sign_up():
     cities = execute_read_query("SELECT City FROM Region")
-    add_user = ("INSERT INTO NormalUser "
+    add_user = ("INSERT INTO NormalUser"
                 "(IsActive, FirstName, LastName, RegisteredAt, Email, Phone, City, Street, House_num) "
                 "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)")
 
@@ -117,6 +117,56 @@ def advertise_detail(adv_id):
         return "Item not found", 404
     return render_template('ads_detail.html', item=advertise[0], ad_images=advertise_images)
 
+
+@app.route("/registerAd/", methods=['GET', 'POST'])
+def register_ad():
+    if session['id'] is not None:
+        categories = execute_read_query("SELECT * FROM AdCat")
+        cities = execute_read_query("SELECT City FROM Region")
+        add_advrs = ("INSERT INTO Advertise"
+                    "(CreatorID, UserMade, AdCatID, Title, Price, Descriptions, Subtitle, City, Street, HouseNum, CreatedAt, UpdatedAt) "
+                    "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
+
+        if request.method == 'POST':
+            ad_title = handle_null_str(request.form['adTitle'])
+            ad_Subtitle = handle_null_str(request.form['adSubTitle'])
+            ad_Desc = handle_null_str(request.form['adDesc'])
+            ad_price = handle_null_int(request.form['adPrice'])
+            ad_image = handle_null_str(request.form['adImage'])
+            ad_cat = handle_null_str(request.form['adCat'])
+            ad_city = handle_null_str(request.form['adCity'])
+            ad_street = handle_null_str(request.form['adStreet'])
+            ad_houseNum = handle_null_str(request.form['adHouseNum'])
+            print(ad_cat)
+
+            data_n_ad= (session['id'],True , ad_cat, ad_title, ad_price, ad_Desc, ad_Subtitle, ad_city, ad_street,
+                           ad_houseNum, datetime.now().strftime("%Y-%m-%d %H:%M:%S"), datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+
+
+            # Check all invalid and incomplete user data
+            if not ad_title:
+                flash("Please enter Title")
+                return redirect(url_for('register_ad'))
+            elif not ad_price:
+                flash('Please enter the Price')
+                return redirect(url_for('register_ad'))
+            elif ad_street is None and ad_houseNum is not None:
+                flash('Please enter street name!')
+                return redirect(url_for('register_ad'))
+            else:
+                print()
+                ad_insertion, ad_id = execute_insert_query(add_advrs, data_n_ad)
+                if user_insertion == 'Done':
+                    # session['loggedin'] = True
+                    # session['id'] = user_id
+                    return redirect(url_for('home'))
+                else:
+                    flash('email or phone is duplicate.Try another')
+                    return redirect(url_for('sign_up'))
+        else:  # GET
+            return render_template("registerAd.html", cities=cities, categories=categories)
+    else:
+        return redirect(url_for('index'))
 #
 # @app.route("/update/", methods=['GET', 'POST'])
 # def update_profile():
