@@ -101,6 +101,20 @@ def sign_up():
     else:   # GET
         return render_template("signup.html", cities=cities)
 
+
+@app.route('/item/<int:adv_id>')
+def advertise_detail(adv_id):
+    # advertise = next((advertise for advertise in advertises if advertise['id'] == adv_id), None)
+    advertise = execute_read_query("SELECT * FROM Advertise WHERE AdID={}".format(adv_id))
+    advertise_images = execute_read_query("SELECT * FROM Images WHERE AdID={}".format(adv_id))
+    print(advertise_images)
+    advertise_images = images_path_handler(advertise_images)
+    print(advertise)
+    print(advertise_images)
+    if advertise is None:
+        return "Item not found", 404
+    return render_template('ads_detail.html', item=advertise[0], ad_images=advertise_images)
+
 #
 # @app.route("/update/", methods=['GET', 'POST'])
 # def update_profile():

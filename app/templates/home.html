@@ -11,10 +11,8 @@
         {% for item in items %}
             <div class="card p-3" >
                 <!--     goes to item details page      -->
-
-<!--                <a href="">-->
-                <!--                    -->
-                {#<img src="{{ item.image.url }}" class="card-img-top" alt="image" height="100px"> #}
+                <a href="{{ url_for('advertise_detail', adv_id=item[0]) }}">
+<!--                <img src="{{ item.image_url }}" class="card-img-top" alt="image" height="100px">-->
                 <div class="card-body">
                     <h2 class="card-title display-6">{{ item[4] }}</h2>
                 <p class="card-text">Price: {{ item[5] }}</p>
