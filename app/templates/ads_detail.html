@@ -6,8 +6,6 @@
 {% block content %}
 <main>
 <section class="py-5 text-center container">
-    <img src="{{ url_for('static', filename='ads_imgs/1.png') }}" class="d-block w-100" alt="advertise image">
-
     <div id="carouselExample" class="carousel slide">
         <div class="carousel-inner">
             {% for image in ad_images %}
