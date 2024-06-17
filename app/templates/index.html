@@ -1,0 +1,14 @@
+{% extends 'index_base.html' %}
+{% block title %}
+    welcome
+{% endblock %}
+
+{% block content %}
+    <section class="py-5 text-center container">
+        <button class="btn btn-secondary rounded-pill px-3 mx-1" type="button">
+            <a href="{{ url_for('sign_up') }}">Sign Up</a>
+        </button>
+        <button class="btn btn-light rounded-pill px-3 mx-1" type="button">Log in</button>
+    </section>
+{% endblock %}
+
