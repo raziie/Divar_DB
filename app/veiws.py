@@ -1,5 +1,5 @@
 from app import app
-from flask import render_template, request, url_for, flash, redirect, session, g
+from flask import render_template, request, url_for, flash, redirect, session
 import mysql.connector
 from datetime import datetime
 from app.input_handler import *
@@ -15,12 +15,10 @@ def execute_insert_query(query, data):
     except mysql.connector.Error as err:
         print("Something went wrong: {}".format(err))
         if 'Duplicate entry' in str(err):
-            print(str(err))
             return 'Duplicate', -1
 
 
 def execute_read_query(query):
-    out = None
     try:
         cursor.execute(query)
         out = cursor.fetchall()
@@ -44,15 +42,15 @@ def index():
 @app.route("/home/")
 def home():
     # TODO: complete navbar for home page and filter advertises
-    if session['id'] is not None:
-        # user_city = execute_read_query("SELECT City FROM NormalUser WHERE UserID = {}".format(session['id']))
-        # ads = execute_read_query("SELECT * FROM Advertise WHERE Advertise.City = '{}' Order BY CreatedAt ".format(user_city[0][0]))
-        recent_ads = execute_read_query("SELECT DISTINCT(Advertise.AdID), CreatorID, UserMade, AdCatID, Title, Price, Descriptions, Subtitle, City, Street, HouseNum, CreatedAt, UpdatedAt, Images.ImagePath"
-                                       " FROM divar.Advertise JOIN divar.Images ON Advertise.AdID = Images.AdID Order BY CreatedAt")
-        print(recent_ads[0:10])
+    if 'logged_in' in session:
+        recent_ads = execute_read_query("SELECT DISTINCT(Advertise.AdID), CreatorID, UserMade, AdCatID, Title,"
+                                        " Price, Descriptions, Subtitle, City, Street, HouseNum, CreatedAt, UpdatedAt,"
+                                        " Images.ImagePath FROM divar.Advertise JOIN divar.Images "
+                                        "ON Advertise.AdID = Images.AdID Order BY CreatedAt")
+
         return render_template('home.html', items=recent_ads[0:10])
     else:
-        return redirect(url_for('index'))
+        return redirect(url_for('sign_up'))
 
 
 @app.route("/signup/", methods=['GET', 'POST'])
@@ -93,7 +91,7 @@ def sign_up():
         else:
             user_insertion, user_id = execute_insert_query(add_user, data_n_user)
             if user_insertion == 'Done':
-                session['loggedin'] = True
+                session['logged_in'] = True
                 session['id'] = user_id
 
                 return redirect(url_for('home'))
@@ -104,44 +102,49 @@ def sign_up():
         return render_template("signup.html", cities=cities)
 
 
+@app.route('/logout')
+def logout():
+    session.pop('id', None)
+    return redirect(url_for('index'))
+
+
 @app.route('/item/<int:adv_id>')
 def advertise_detail(adv_id):
-    # advertise = next((advertise for advertise in advertises if advertise['id'] == adv_id), None)
-    advertise = execute_read_query("SELECT * FROM Advertise WHERE AdID={}".format(adv_id))
-    advertise_images = execute_read_query("SELECT * FROM Images WHERE AdID={}".format(adv_id))
-    print(advertise_images)
-    advertise_images = images_path_handler(advertise_images)
-    print(advertise)
-    print(advertise_images)
-    if advertise is None:
-        return "Item not found", 404
-    return render_template('ads_detail.html', item=advertise[0], ad_images=advertise_images)
+    if 'logged_in' in session:
+        execute_insert_query("INSERT INTO Visit (AdID, UserID) VALUES (%s, %s)", (adv_id, session['id']))
+        advertise = execute_read_query("SELECT * FROM Advertise WHERE AdID={}".format(adv_id))
+        advertise_images = execute_read_query("SELECT * FROM Images WHERE AdID={}".format(adv_id))
+        advertise_images = images_path_handler(advertise_images)
+        if advertise is None:
+            return "Item not found", 404
+        return render_template('ads_detail.html', item=advertise[0], ad_images=advertise_images)
+    else:
+        return redirect(url_for('sign_up'))
 
 
 @app.route("/registerAd/", methods=['GET', 'POST'])
 def register_ad():
-    if session['id'] is not None:
+    if 'logged_in' in session:
         categories = execute_read_query("SELECT * FROM AdCat")
         cities = execute_read_query("SELECT City FROM Region")
-        add_advrs = ("INSERT INTO Advertise"
-                    "(CreatorID, UserMade, AdCatID, Title, Price, Descriptions, Subtitle, City, Street, HouseNum, CreatedAt, UpdatedAt) "
-                    "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
+        add_advertise = ("INSERT INTO Advertise (CreatorID, UserMade, AdCatID, Title, Price, Descriptions,"
+                         " Subtitle, City, Street, HouseNum, CreatedAt, UpdatedAt) "
+                         "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
 
         if request.method == 'POST':
             ad_title = handle_null_str(request.form['adTitle'])
-            ad_Subtitle = handle_null_str(request.form['adSubTitle'])
-            ad_Desc = handle_null_str(request.form['adDesc'])
-            ad_price = handle_null_int(request.form['adPrice'])
-            ad_image = handle_null_str(request.form['adImage'])
+            ad_subtitle = handle_null_str(request.form['adSubTitle'])
+            ad_description = handle_null_str(request.form['adDesc'])
+            ad_price = handle_null_float(request.form['adPrice'])
+            # ad_image = handle_null_str(request.form['adImage'])
             ad_cat = handle_null_str(request.form['adCat'])
             ad_city = handle_null_str(request.form['adCity'])
             ad_street = handle_null_str(request.form['adStreet'])
-            ad_houseNum = handle_null_str(request.form['adHouseNum'])
-            print(ad_cat)
+            ad_house_num = handle_null_str(request.form['adHouseNum'])
 
-            data_n_ad= (session['id'],True , ad_cat, ad_title, ad_price, ad_Desc, ad_Subtitle, ad_city, ad_street,
-                           ad_houseNum, datetime.now().strftime("%Y-%m-%d %H:%M:%S"), datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-
+            data_n_ad = (session['id'], True, ad_cat, ad_title, ad_price, ad_description, ad_subtitle, ad_city,
+                         ad_street, ad_house_num, datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                         datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
             # Check all invalid and incomplete user data
             if not ad_title:
@@ -150,15 +153,12 @@ def register_ad():
             elif not ad_price:
                 flash('Please enter the Price')
                 return redirect(url_for('register_ad'))
-            elif ad_street is None and ad_houseNum is not None:
+            elif ad_street is None and ad_house_num is not None:
                 flash('Please enter street name!')
                 return redirect(url_for('register_ad'))
             else:
-                print()
-                ad_insertion, ad_id = execute_insert_query(add_advrs, data_n_ad)
-                if user_insertion == 'Done':
-                    # session['loggedin'] = True
-                    # session['id'] = user_id
+                ad_insertion, ad_id = execute_insert_query(add_advertise, data_n_ad)
+                if ad_insertion == 'Done':
                     return redirect(url_for('home'))
                 else:
                     flash('email or phone is duplicate.Try another')
@@ -166,8 +166,9 @@ def register_ad():
         else:  # GET
             return render_template("registerAd.html", cities=cities, categories=categories)
     else:
-        return redirect(url_for('index'))
+        return redirect(url_for('sign_up'))
+
 #
-# @app.route("/update/", methods=['GET', 'POST'])
-# def update_profile():
+# @app.route("/editProfile/", methods=['GET', 'POST'])
+# def edit_profile():
 #

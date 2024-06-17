@@ -5,16 +5,16 @@
 {% block content %}
 
 {% with messages = get_flashed_messages() %}
-    {% if messages %}
-        <ul class=flashes>
-        {% for message in messages %}
-          <div class="alert alert-warning">
-            <button type="button" class="close" data-dismiss="alert">&times;</button>
+  {% if messages %}
+    <ul class=flashes>
+      {% for message in messages %}
+        <div class="alert alert-warning">
+          <button type="button" class="close" data-dismiss="alert">&times;</button>
             {{ message }}
           </div>
-        {% endfor %}
-        </ul>
-    {% endif %}
+      {% endfor %}
+    </ul>
+  {% endif %}
 {% endwith %}
 
 <main class="form-signin w-100 m-auto">
@@ -55,7 +55,7 @@
     <label for="adCat">Category: (default is chosen) </label>
     <select id="adCat" name="adCat" required >
       {% for cat in categories %}
-<!--        ha?????????????????????           -->
+      <!--        ha?????????????????????           -->
       <option value="{{ cat[0] }}">{{ cat[1] }}</option>
       {% endfor %}
     </select>
@@ -81,26 +81,6 @@
       <input type="number" class="form-control" name="adHouseNum" id="adHouseNum" placeholder="House Number"
       value="{{ request.form['inHouseNum'] }}">
     </div>
-
-<!--    <div class="form-group">-->
-<!--    <label for="uCity">City: (default is chosen) </label>-->
-<!--    <select id="uCity" name="uCity" required >-->
-<!--      {% for city in cities %}-->
-<!--      <option value="{{ city[0] }}">{{ city[0] }}</option>-->
-<!--      {% endfor %}-->
-<!--    </select>-->
-<!--    </div>-->
-
-<!--    <div class="form-group">-->
-<!--      <label for="inStreet">Street</label>-->
-<!--      <input type="text" class="form-control" name="inStreet" id="inStreet" placeholder="street"-->
-<!--      value="{{ request.form['inStreet'] }}">-->
-<!--    </div>-->
-<!--    <div class="form-group">-->
-<!--      <label for="inHouseNum">House Number</label>-->
-<!--      <input type="number" class="form-control" name="inHouseNum" id="inHouseNum" placeholder="House Number"-->
-<!--      value="{{ request.form['inHouseNum'] }}">-->
-<!--    </div>-->
 
     <div class="form-group form-check">
       <input type="checkbox" class="form-check-input" id="exampleCheck1" required>
