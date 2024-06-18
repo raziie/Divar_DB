@@ -239,7 +239,7 @@ def report_ad():
                 # session['id'] = user_id
                 return redirect(url_for('home'))
             else:
-                # I don't know
+                # I don't know what to check
                 #this should be fixed
                 flash("Nothing can't be duplicate.Try another")
                 return redirect(url_for('report_ad'))
@@ -247,4 +247,3 @@ def report_ad():
             return render_template("reportAd.html", categories=categories)
     else:
         return redirect(url_for('sign_up'))
-
