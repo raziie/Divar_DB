@@ -18,7 +18,8 @@ Sign Up
   {% endif %}
   {% endwith %}
   <main class="form-signin w-100 m-auto d-flex align-items-center justify-content-center">
-    <form action="{{ url_for('sign_up') }}" method="post" class="bg-success my-5 p-3 text-white bg-opacity-50 rounded col-sm-8 col-lg-5">
+    <form action="{{ url_for('sign_up') }}" method="post"
+      class="bg-success my-5 p-3 text-white bg-opacity-50 rounded col-sm-8 col-lg-5">
       <div class="form-group">
         <label for="inEmail">ایمیل</label>
         <input type="email" class="form-control my-2" name="inEmail" id="inEmail" placeholder="ایمیل..."
@@ -26,8 +27,8 @@ Sign Up
       </div>
       <div class="form-group">
         <label for="inPhone">شماره تلفن</label>
-        <input type="tel" class="form-control my-2" id="inPhone" name="inPhone" pattern="[0-9]{11}" placeholder="تلفن..."
-          value="{{ request.form['inPhone'] }}">
+        <input type="tel" class="form-control my-2" id="inPhone" name="inPhone" pattern="[0-9]{11}"
+          placeholder="تلفن..." value="{{ request.form['inPhone'] }}">
       </div>
 
       <div class="form-group">
@@ -61,12 +62,12 @@ Sign Up
           value="{{ request.form['inHouseNum'] }}">
       </div>
 
-<!--      <div class="form-group form-check">-->
-<!--        <input type="checkbox" class="form-check-input" id="exampleCheck1" required>-->
-<!--        <label class="form-check-label" for="exampleCheck1">Check me out</label>-->
-<!--      </div>-->
+      <!--      <div class="form-group form-check">-->
+      <!--        <input type="checkbox" class="form-check-input" id="exampleCheck1" required>-->
+      <!--        <label class="form-check-label" for="exampleCheck1">Check me out</label>-->
+      <!--      </div>-->
       <div class="d-grid gap-2">
-      <button type="submit" class="btn btn-success m-2" value="Submit">ثبت نام</button>
+        <button type="submit" class="btn btn-success m-2" value="Submit">ثبت نام</button>
       </div>
     </form>
   </main>

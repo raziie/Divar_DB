@@ -1,20 +1,20 @@
 {% extends 'base.html' %}
 {% block title %}
-    Register Advertise
+Register Advertise
 {% endblock %}
 {% block content %}
 
 {% with messages = get_flashed_messages() %}
-  {% if messages %}
-    <ul class=flashes>
-      {% for message in messages %}
-        <div class="alert alert-warning">
-          <button type="button" class="close" data-dismiss="alert">&times;</button>
-            {{ message }}
-          </div>
-      {% endfor %}
-    </ul>
-  {% endif %}
+{% if messages %}
+<ul class=flashes>
+  {% for message in messages %}
+  <div class="alert alert-warning">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    {{ message }}
+  </div>
+  {% endfor %}
+</ul>
+{% endif %}
 {% endwith %}
 
 <main class="form-signin w-100 m-auto">
@@ -23,63 +23,63 @@
 
     <div class="form-group">
       <label for="adTitle">Title</label>
-      <input type="text" class="form-control"  name="adTitle" id="adTitle"  placeholder="Enter Title"
-      value="{{ request.form['adTitle'] }}" required>
+      <input type="text" class="form-control" name="adTitle" id="adTitle" placeholder="Enter Title"
+        value="{{ request.form['adTitle'] }}" required>
     </div>
 
-     <div class="form-group">
+    <div class="form-group">
       <label for="adSubTitle">Subtitle</label>
-      <input type="text" class="form-control"  name="adSubTitle" id="adSubTitle"  placeholder="Enter SubTitle"
-      value="{{ request.form['adSubTitle'] }}">
+      <input type="text" class="form-control" name="adSubTitle" id="adSubTitle" placeholder="Enter SubTitle"
+        value="{{ request.form['adSubTitle'] }}">
     </div>
 
     <div class="form-group">
       <label for="adDesc">Descriptions</label>
       <input type="text" class="form-control" id="adDesc" name="adDesc" placeholder="Enter Descriptions"
-      value="{{ request.form['adDesc'] }}">
+        value="{{ request.form['adDesc'] }}">
     </div>
 
     <div class="form-group">
       <label for="adPrice">Price</label>
       <input type="number" step="0.01" class="form-control" name="adPrice" id="adPrice" placeholder="Price"
-      value="{{ request.form['adPrice'] }}" required>
+        value="{{ request.form['adPrice'] }}" required>
     </div>
 
     <div class="form-group">
       <label for="adImage">Image</label>
       <input type="file" class="form-control" name="adImage" id="adImage" placeholder="Image"
-      value="{{ request.form['inLName'] }}">
+        value="{{ request.form['inLName'] }}">
     </div>
 
     <div class="form-group">
-    <label for="adCat">Category: (default is chosen) </label>
-    <select id="adCat" name="adCat" required >
-      {% for cat in categories %}
-      <!--        ha?????????????????????           -->
-      <option value="{{ cat[0] }}">{{ cat[1] }}</option>
-      {% endfor %}
-    </select>
+      <label for="adCat">Category: (default is chosen) </label>
+      <select id="adCat" name="adCat" required>
+        {% for cat in categories %}
+        <!--        ha?????????????????????           -->
+        <option value="{{ cat[0] }}">{{ cat[1] }}</option>
+        {% endfor %}
+      </select>
     </div>
 
     <div class="form-group">
-    <label for="adCity">City: (default is chosen) </label>
-    <select id="adCity" name="adCity" required >
-      {% for city in cities %}
-      <option value="{{ city[0] }}">{{ city[0] }}</option>
-      {% endfor %}
-    </select>
+      <label for="adCity">City: (default is chosen) </label>
+      <select id="adCity" name="adCity" required>
+        {% for city in cities %}
+        <option value="{{ city[0] }}">{{ city[0] }}</option>
+        {% endfor %}
+      </select>
     </div>
 
     <div class="form-group">
       <label for="adStreet">Street</label>
       <input type="text" class="form-control" name="adStreet" id="adStreet" placeholder="street"
-      value="{{ request.form['inStreet'] }}">
+        value="{{ request.form['inStreet'] }}">
     </div>
 
     <div class="form-group">
       <label for="adHouseNum">House Number</label>
       <input type="number" class="form-control" name="adHouseNum" id="adHouseNum" placeholder="House Number"
-      value="{{ request.form['inHouseNum'] }}">
+        value="{{ request.form['inHouseNum'] }}">
     </div>
 
     <div class="form-group form-check">
