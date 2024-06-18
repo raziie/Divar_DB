@@ -161,6 +161,7 @@ def register_ad():
                 if ad_insertion == 'Done':
                     return redirect(url_for('home'))
                 else:
+                    # not sure
                     flash('email or phone is duplicate.Try another')
                     return redirect(url_for('sign_up'))
         else:  # GET
@@ -168,7 +169,82 @@ def register_ad():
     else:
         return redirect(url_for('sign_up'))
 
-#
-# @app.route("/editProfile/", methods=['GET', 'POST'])
-# def edit_profile():
-#
+
+#incomplete
+# error in executing insert query line 203
+@app.route("/registerBusiness/", methods=['GET', 'POST'])
+def register_bus():
+
+    if 'logged_in' in session:
+
+        categories = execute_read_query("SELECT * FROM BusCat")
+        cities = execute_read_query("SELECT City FROM Region")
+        add_business = ("INSERT INTO Business"
+                    "(UserID, IsActive, BusName, BusCatID, City, Street, HouseNum) "
+                    "VALUES (%s, %s, %s, %s, %s, %s, %s)")
+
+        if request.method == 'POST':
+            bus_name = handle_null_str(request.form['busName'])
+            bus_cat = handle_null_int(request.form['busCat'])
+            bus_city = handle_null_str(request.form['busCity'])
+            bus_street = handle_null_str(request.form['busStreet'])
+            bus_house_num = handle_null_int(request.form['busHouseNum'])
+
+            data_n_business = (session['id'], True, bus_name, bus_cat, bus_city, bus_street, bus_house_num)
+
+            # Check all invalid and incomplete user data
+            if not bus_name:
+                flash('Please Enter your Business Name')
+                return redirect(url_for('register_bus'))
+            elif bus_street is None and bus_house_num is not None:
+                flash('Please enter street name!')
+                return redirect(url_for('register_bus'))
+            else:
+                bus_insertion, bus_id = execute_insert_query(add_business, data_n_business)
+                if bus_insertion == 'Done':
+                    # session['loggedin'] = True
+                    # session['id'] = user_id
+                    return redirect(url_for('home'))
+                else:
+                    # how???
+                    flash('Business Name is duplicate.Try another')
+                    return redirect(url_for('register_bus'))
+        else:  # GET
+            return render_template("registerBus.html", cities=cities, categories=categories)
+    else:
+        return redirect(url_for('sign_up'))
+
+#incomplete
+# it doesn't have the ad id
+@app.route("/reportAd/", methods=['GET', 'POST'])
+def report_ad():
+
+    if 'logged_in' in session:
+
+        categories = execute_read_query("SELECT * FROM RepCat")
+        add_report = ("INSERT INTO AdReport"
+                    "(AdID, UserID, RepCatID, Content) "
+                    "VALUES (%s, %s, %s, %s)")
+
+        if request.method == 'POST':
+            rep_cat = handle_null_int(request.form['repCat'])
+            rep_content = handle_null_str(request.form['repContent'])
+
+            data_n_report = ('adID', session['id'], rep_cat, rep_content)
+
+            # Check all invalid and incomplete user data
+            rep_insertion, rep_id = execute_insert_query(add_rep, data_n_report)
+            if rep_insertion == 'Done':
+                # session['loggedin'] = True
+                # session['id'] = user_id
+                return redirect(url_for('home'))
+            else:
+                # I don't know
+                #this should be fixed
+                flash("Nothing can't be duplicate.Try another")
+                return redirect(url_for('report_ad'))
+        else:  # GET
+            return render_template("reportAd.html", categories=categories)
+    else:
+        return redirect(url_for('sign_up'))
+
