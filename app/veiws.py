@@ -60,7 +60,16 @@ def home():
                                             "Order BY CreatedAt"
                                             .format(searched))
 
-        return render_template('home.html', items=recent_ads[0:30])
+        page = request.args.get('page', 1, type=int)
+        per_page = 10
+        start = (page - 1) * per_page
+        end = start + per_page
+        total_pages = (len(recent_ads) + per_page - 1) // per_page
+        items_on_page = recent_ads[start:end]
+        return render_template('home.html', items=items_on_page, total_pages=total_pages, page=page)
+
+
+        # return render_template('home.html', items=recent_ads[0:30])
     else:
         return redirect(url_for('sign_up'))
 
