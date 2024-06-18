@@ -170,7 +170,7 @@ def register_ad():
     else:
         return redirect(url_for('sign_up'))
 
-
+# TODO : DEBUG THIS BLOODY ERROR
 #incomplete
 # error in executing insert query line 203
 @app.route("/registerBusiness/", methods=['GET', 'POST'])
@@ -215,6 +215,7 @@ def register_bus():
     else:
         return redirect(url_for('sign_up'))
 
+#TODO : I WAS TIRED TO CHECK HOW TO PASS DATA TO NEW PAGE SOMBODEY PLEASSE CHECK THIS
 #incomplete
 # it doesn't have the ad id
 @app.route("/reportAd/", methods=['GET', 'POST'])
@@ -246,5 +247,85 @@ def report_ad():
                 return redirect(url_for('report_ad'))
         else:  # GET
             return render_template("reportAd.html", categories=categories)
+    else:
+        return redirect(url_for('sign_up'))
+
+# TODO: FIX THIS FUCKING API AND QUERIES. TOO MANY PROBLEMS
+# incomplete
+# a lot of things to fix
+@app.route("/updateProfile/", methods=['GET', 'POST'])
+def update_profile():
+    if 'logged_in' in session:
+        cities = execute_read_query("SELECT City FROM Region")
+
+        if request.method == 'POST':
+            prof_f_name = handle_null_str(request.form['inFName'])
+            prof_l_name = handle_null_str(request.form['inLName'])
+            prof_phone = handle_null_str(request.form['inPhone'])
+            prof_email = handle_null_str(request.form['inEmail'])
+            prof_city = handle_null_str(request.form['uCity'])
+            prof_street = handle_null_str(request.form['inStreet'])
+            prof_house_num = handle_null_int(request.form['inHouseNum'])
+
+            # Check all invalid and incomplete user data
+            if prof_f_name:
+                    query = ("UPDATE NormalUser"
+                             "SET FirstName = %s"
+                             "WHERE UserID= %s")
+                    data=(prof_f_name, session['id'])
+            if prof_l_name:
+                    query = ("UPDATE NormalUser"
+                             "SET  LastName= %s"
+                             "WHERE UserID= %s")
+                    data=(prof_l_name, session['id'])
+            if prof_email:
+                if not email_checker(prof_email):
+                    flash("Invalid Email")
+                    return redirect(url_for('update_profile'))
+                else:
+                    query = ("UPDATE NormalUser"
+                             "SET Email = %s"
+                             "WHERE UserID= %s")
+                    data=(prof_email, session['id'])
+            if prof_phone:
+                if not phone_checker(prof_phone):
+                    flash("Invalid Phone Number")
+                    return redirect(url_for('update_profile'))
+                else:
+                    query = ("UPDATE NormalUser"
+                             "SET Phone = %s"
+                             "WHERE UserID= %s")
+                    data = (prof_email, session['id'])
+            if prof_city:
+                query = ("UPDATE NormalUser"
+                         "SET City = %s"
+                         "WHERE UserID= %s")
+                data = (prof_city, session['id'])
+            if prof_street:
+                query = ("UPDATE NormalUser"
+                         "SET Street = %s"
+                         "WHERE UserID= %s")
+                data = (prof_street, session['id'])
+            if prof_house_num:
+                query = ("UPDATE NormalUser"
+                         "SET House_num = %s"
+                         "WHERE UserID= %s")
+                data = (prof_house_num, session['id'])
+
+            #this should be in all of them
+            #what is user_id here??
+            updating, user_id = execute_insert_query(query, data)
+            if updating == 'Done':
+                # session['logged_in'] = True
+                # session['id'] = user_id
+                return redirect(url_for('home'))
+            else:
+                flash('email or phone is duplicate.Try another')
+                return redirect(url_for('update_profile'))
+            #
+
+
+        else:  # GET
+            return render_template("updateProfile.html", cities=cities)
     else:
         return redirect(url_for('sign_up'))
