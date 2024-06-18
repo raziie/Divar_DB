@@ -110,6 +110,7 @@ def logout():
 
 @app.route('/item/<int:adv_id>')
 def advertise_detail(adv_id):
+    # check if this is here
     if 'logged_in' in session:
         execute_insert_query("INSERT INTO Visit (AdID, UserID) VALUES (%s, %s)", (adv_id, session['id']))
         advertise = execute_read_query("SELECT * FROM Advertise WHERE AdID={}".format(adv_id))
