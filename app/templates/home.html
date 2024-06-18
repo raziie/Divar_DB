@@ -4,6 +4,11 @@
 {% endblock %}
 
 {% block content %}
+<form class="d-flex" role="search" method="post" action="{{ url_for('home') }}">
+        <input class="form-control me-2" value="{{ request.form['searchString'] }}" type="search" placeholder="Search" name="searchString">
+        <button class="btn btn-outline-success" type="submit">Search</button>
+</form>
+
   <section class="py-5 text-center container">
     <h1 class="display-4 m-5">Newest Items</h1>
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
@@ -21,4 +26,25 @@
       {% endfor %}
     </div>
   </section>
+
+
+
+<!--<nav>-->
+<!--  <ul class="pagination">-->
+<!--    <li class="page-item">-->
+<!--      <a class="page-link" href="#" aria-label="Previous">-->
+<!--        <span aria-hidden="true">&laquo;</span>-->
+<!--      </a>-->
+<!--    </li>-->
+<!--    <li class="page-item"><a class="page-link" href="#">1</a></li>-->
+<!--    <li class="page-item"><a class="page-link" href="#">2</a></li>-->
+<!--    <li class="page-item"><a class="page-link" href="#">3</a></li>-->
+<!--    <li class="page-item">-->
+<!--      <a class="page-link" href="#" aria-label="Next">-->
+<!--        <span aria-hidden="true">&raquo;</span>-->
+<!--      </a>-->
+<!--    </li>-->
+<!--  </ul>-->
+<!--</nav>-->
+
 {% endblock %}
