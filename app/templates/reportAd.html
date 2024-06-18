@@ -18,7 +18,7 @@
 {% endwith %}
 
 <main class="form-signin w-100 m-auto">
-  <form action="{{ url_for('report_ad') }}" method="post">
+  <form action="{{ url_for('report_ad', ad_id=AdID) }}" method="post">
     <br>
 
     <div class="form-group">
