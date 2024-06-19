@@ -315,3 +315,19 @@ def update_profile():
             return render_template("updateProfile.html", cities=cities)
     else:
         return redirect(url_for('sign_up'))
+
+
+# TODO : A QUERY TO EXTRACT THE VISITS FOR EACH AD
+# should we show the advertize too?
+@app.route("/adStatus/")
+def check_status():
+    if 'logged_in' in session:
+        ads = execute_read_query("SELECT * FROM divar.AdStatus JOIN divar.Advertise on AdID"
+                                " WHERE UserID= {}".format(session['id']))
+        print(ads)
+        if ads is None   :
+            flash("You don't have any advertise")
+            return redirect(url_for('home'))
+        return render_template('status.html', items=ads)
+    else:
+        return redirect(url_for('sign_up'))
