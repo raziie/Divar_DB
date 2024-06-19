@@ -1,7 +1,5 @@
 from app import app
 from flask import render_template, request, url_for, flash, redirect, session
-# from flask_sqlalchemy import pagination
-from flask_paginate import Pagination
 import mysql.connector
 from datetime import datetime
 from app.input_handler import *
@@ -41,7 +39,7 @@ def index():
     return render_template('index.html')
 
 
-@app.route("/home/", methods=['GET', 'POST'])
+@app.route("/home/")
 def home():
     # TODO: complete navbar for home page and filter advertises
     if 'logged_in' in session:
@@ -50,26 +48,7 @@ def home():
                                         " Images.ImagePath FROM divar.Advertise JOIN divar.Images "
                                         "ON Advertise.AdID = Images.AdID Order BY CreatedAt")
 
-        if request.method == 'POST':
-            searched = str(request.form['searchString'])
-            recent_ads = execute_read_query("SELECT DISTINCT(Advertise.AdID), CreatorID, UserMade, AdCatID, Title,"
-                                            " Price, Descriptions, Subtitle, City, Street, HouseNum, CreatedAt,"
-                                            " UpdatedAt, Images.ImagePath FROM divar.Advertise JOIN divar.Images "
-                                            "ON Advertise.AdID = Images.AdID "
-                                            "WHERE Advertise.Title LIKE '%{}%'"
-                                            "Order BY CreatedAt"
-                                            .format(searched))
-
-        page = request.args.get('page', 1, type=int)
-        per_page = 10
-        start = (page - 1) * per_page
-        end = start + per_page
-        total_pages = (len(recent_ads) + per_page - 1) // per_page
-        items_on_page = recent_ads[start:end]
-        return render_template('home.html', items=items_on_page, total_pages=total_pages, page=page)
-
-
-        # return render_template('home.html', items=recent_ads[0:30])
+        return render_template('home.html', items=recent_ads[0:10])
     else:
         return redirect(url_for('sign_up'))
 
@@ -119,7 +98,7 @@ def sign_up():
             else:
                 flash('email or phone is duplicate.Try another')
                 return redirect(url_for('sign_up'))
-    else:  # GET
+    else:   # GET
         return render_template("signup.html", cities=cities)
 
 
@@ -191,9 +170,8 @@ def register_ad():
     else:
         return redirect(url_for('sign_up'))
 
-
 # TODO : DEBUG THIS BLOODY ERROR
-# incomplete
+#incomplete
 # error in executing insert query line 203
 @app.route("/registerBusiness/", methods=['GET', 'POST'])
 def register_bus():
@@ -201,8 +179,8 @@ def register_bus():
         categories = execute_read_query("SELECT * FROM BusCat")
         cities = execute_read_query("SELECT City FROM Region")
         add_business = ("INSERT INTO Business"
-                        "(UserID, IsActive, BusName, BusCatID, City, Street, HouseNum) "
-                        "VALUES (%s, %s, %s, %s, %s, %s, %s)")
+                    "(UserID, IsActive, BusName, BusCatID, City, Street, HouseNum) "
+                    "VALUES (%s, %s, %s, %s, %s, %s, %s)")
 
         if request.method == 'POST':
             bus_name = handle_null_str(request.form['busName'])
@@ -231,17 +209,16 @@ def register_bus():
     else:
         return redirect(url_for('sign_up'))
 
-
-# TODO : I WAS TIRED TO CHECK HOW TO PASS DATA TO NEW PAGE SOMEBODY PLEASE CHECK THIS
-# incomplete
+#TODO : I WAS TIRED TO CHECK HOW TO PASS DATA TO NEW PAGE SOMBODEY PLEASSE CHECK THIS
+#incomplete
 # it doesn't have the ad id
 @app.route("/reportAd/<int:ad_id>", methods=['GET', 'POST'])
 def report_ad(ad_id):
     if 'logged_in' in session:
         categories = execute_read_query("SELECT * FROM RepCat")
         add_report = ("INSERT INTO AdReport"
-                      "(AdID, UserID, RepCatID, Content) "
-                      "VALUES (%s, %s, %s, %s)")
+                    "(AdID, UserID, RepCatID, Content) "
+                    "VALUES (%s, %s, %s, %s)")
 
         if request.method == 'POST':
             rep_cat = handle_null_int(request.form['repCat'])
@@ -256,8 +233,7 @@ def report_ad(ad_id):
     else:
         return redirect(url_for('sign_up'))
 
-
-# TODO: FIX THIS FUCKING API AND QUERIES. TOO MANY PROBLEMS
+# TODO: FIX THIS FUCKING API AND DEBUG ERRORS. QUERIES ARE WRONG FORMAT
 # incomplete
 # a lot of things to fix
 @app.route("/updateProfile/", methods=['GET', 'POST'])
@@ -277,14 +253,16 @@ def update_profile():
             # Check all invalid and incomplete user data
             if prof_f_name:
                 query = ("UPDATE NormalUser"
-                         "SET FirstName = %s"
-                         "WHERE UserID= %s")
-                data = (prof_f_name, session['id'])
+                         "SET FirstName = (%s)"
+                         "WHERE UserID= (%s)")
+                data=(prof_f_name, session['id'])
+                updating, user_id = execute_insert_query(query, data)
             if prof_l_name:
                 query = ("UPDATE NormalUser"
                          "SET  LastName= %s"
                          "WHERE UserID= %s")
-                data = (prof_l_name, session['id'])
+                data=(prof_l_name, session['id'])
+                updating, user_id = execute_insert_query(query, data)
             if prof_email:
                 if not email_checker(prof_email):
                     flash("Invalid Email")
@@ -293,7 +271,13 @@ def update_profile():
                     query = ("UPDATE NormalUser"
                              "SET Email = %s"
                              "WHERE UserID= %s")
-                    data = (prof_email, session['id'])
+                    data=(prof_email, session['id'])
+                    updating, user_id = execute_insert_query(query, data)
+                if updating == 'Done':
+                    return redirect(url_for('home'))
+                else:
+                    flash('Email is Duplicate.Try another')
+                    return redirect(url_for('update_profile'))
             if prof_phone:
                 if not phone_checker(prof_phone):
                     flash("Invalid Phone Number")
@@ -303,33 +287,30 @@ def update_profile():
                              "SET Phone = %s"
                              "WHERE UserID= %s")
                     data = (prof_email, session['id'])
+                    updating, user_id = execute_insert_query(query, data)
+                    if updating == 'Done':
+                        return redirect(url_for('home'))
+                    else:
+                        flash('Phone Number is duplicate.Try another')
+                        return redirect(url_for('update_profile'))
             if prof_city:
                 query = ("UPDATE NormalUser"
                          "SET City = %s"
                          "WHERE UserID= %s")
                 data = (prof_city, session['id'])
+                updating, user_id = execute_insert_query(query, data)
             if prof_street:
                 query = ("UPDATE NormalUser"
                          "SET Street = %s"
                          "WHERE UserID= %s")
                 data = (prof_street, session['id'])
+                updating, user_id = execute_insert_query(query, data)
             if prof_house_num:
                 query = ("UPDATE NormalUser"
                          "SET House_num = %s"
                          "WHERE UserID= %s")
                 data = (prof_house_num, session['id'])
-
-            # this should be in all of them
-            # what is user_id here??
-            updating, user_id = execute_insert_query(query, data)
-            if updating == 'Done':
-                # session['logged_in'] = True
-                # session['id'] = user_id
-                return redirect(url_for('home'))
-            else:
-                flash('email or phone is duplicate.Try another')
-                return redirect(url_for('update_profile'))
-            #
+                updating, user_id = execute_insert_query(query, data)
         else:  # GET
             return render_template("updateProfile.html", cities=cities)
     else:

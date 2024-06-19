@@ -46,3 +46,4 @@ def images_path_handler(images):
         return ad_image
     else:
         return []
+
