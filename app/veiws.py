@@ -39,7 +39,7 @@ def index():
     return render_template('index.html')
 
 
-@app.route("/home/")
+@app.route("/home/", methods=['GET', 'POST'])
 def home():
     # TODO: complete navbar for home page and filter advertises
     if 'logged_in' in session:
@@ -48,7 +48,24 @@ def home():
                                         " Images.ImagePath FROM divar.Advertise JOIN divar.Images "
                                         "ON Advertise.AdID = Images.AdID Order BY CreatedAt")
 
-        return render_template('home.html', items=recent_ads[0:10])
+        if request.method == 'POST':
+            searched = str(request.form['searchString'])
+            recent_ads = execute_read_query("SELECT DISTINCT(Advertise.AdID), CreatorID, UserMade, AdCatID, Title,"
+                                            " Price, Descriptions, Subtitle, City, Street, HouseNum, CreatedAt,"
+                                            " UpdatedAt, Images.ImagePath FROM divar.Advertise JOIN divar.Images "
+                                            "ON Advertise.AdID = Images.AdID "
+                                            "WHERE Advertise.Title LIKE '%{}%'"
+                                            "Order BY CreatedAt".format(searched))
+
+        page = request.args.get('page', 1, type=int)
+        per_page = 12
+        start = (page - 1) * per_page
+        end = start + per_page
+        total_pages = (len(recent_ads) + per_page - 1) // per_page
+        items_on_page = recent_ads[start:end]
+
+        return render_template('home.html', items=items_on_page, total_pages=total_pages, page=page)
+
     else:
         return redirect(url_for('sign_up'))
 
@@ -170,17 +187,14 @@ def register_ad():
     else:
         return redirect(url_for('sign_up'))
 
-# TODO : DEBUG THIS BLOODY ERROR
-#incomplete
-# error in executing insert query line 203
+
 @app.route("/registerBusiness/", methods=['GET', 'POST'])
 def register_bus():
     if 'logged_in' in session:
         categories = execute_read_query("SELECT * FROM BusCat")
         cities = execute_read_query("SELECT City FROM Region")
-        add_business = ("INSERT INTO Business"
-                    "(UserID, IsActive, BusName, BusCatID, City, Street, HouseNum) "
-                    "VALUES (%s, %s, %s, %s, %s, %s, %s)")
+        add_business = ("INSERT INTO Business (UserID, IsActive, BusName,"
+                        " BusCatID, City, Street, HouseNum) VALUES (%s, %s, %s, %s, %s, %s, %s)")
 
         if request.method == 'POST':
             bus_name = handle_null_str(request.form['busName'])
@@ -209,16 +223,14 @@ def register_bus():
     else:
         return redirect(url_for('sign_up'))
 
-#TODO : I WAS TIRED TO CHECK HOW TO PASS DATA TO NEW PAGE SOMBODEY PLEASSE CHECK THIS
-#incomplete
-# it doesn't have the ad id
+
+
 @app.route("/reportAd/<int:ad_id>", methods=['GET', 'POST'])
 def report_ad(ad_id):
     if 'logged_in' in session:
         categories = execute_read_query("SELECT * FROM RepCat")
-        add_report = ("INSERT INTO AdReport"
-                    "(AdID, UserID, RepCatID, Content) "
-                    "VALUES (%s, %s, %s, %s)")
+        add_report = ("INSERT INTO AdReport (AdID, UserID, RepCatID, Content) "
+                      "VALUES (%s, %s, %s, %s)")
 
         if request.method == 'POST':
             rep_cat = handle_null_int(request.form['repCat'])
@@ -232,6 +244,7 @@ def report_ad(ad_id):
             return render_template("reportAd.html", categories=categories, AdID=ad_id)
     else:
         return redirect(url_for('sign_up'))
+
 
 # TODO: FIX THIS FUCKING API AND DEBUG ERRORS. QUERIES ARE WRONG FORMAT
 # incomplete
