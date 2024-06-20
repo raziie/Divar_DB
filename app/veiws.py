@@ -5,6 +5,36 @@ from datetime import datetime
 from app.input_handler import *
 import dotenv
 import os
+from app.app_objects import *
+
+
+def user_update_query(attribute, attr_name):
+    if isinstance(attribute, str):
+        query = "UPDATE NormalUser SET {} = '{}' WHERE UserID= {}".format(attr_name, attribute, session['id'])
+    else:
+        query = "UPDATE NormalUser SET {} = {} WHERE UserID= {}".format(attr_name, attribute, session['id'])
+    print('query', query)
+    updating = execute_update_query(query)
+    if updating == 'Duplicate':
+        flash('{} is duplicate.Try agin'.format(attr_name))
+        return updating
+    elif updating == 'Error':
+        flash('Updating was incomplete. Try agin'.format(attr_name))
+        return updating
+    else:
+        return updating
+
+
+def execute_update_query(query):
+    try:
+        cursor.execute(query)
+        cnx.commit()
+        return 'Done'
+    except mysql.connector.Error as err:
+        print("Something went wrong: {}".format(err))
+        if 'Duplicate' in str(err):
+            return 'Duplicate'
+        return 'Error'
 
 
 def execute_insert_query(query, data):
@@ -18,11 +48,14 @@ def execute_insert_query(query, data):
             return 'Duplicate', -1
 
 
-def execute_read_query(query):
+def execute_read_query(query, fetch_all):
     try:
         cursor.execute(query)
-        out = cursor.fetchall()
-        return out
+        if fetch_all:
+            return cursor.fetchall()
+        else:
+            return cursor.fetchone()
+
     except mysql.connector.Error as err:
         print("Something went wrong: {}".format(err))
 
@@ -46,7 +79,7 @@ def home():
         recent_ads = execute_read_query("SELECT DISTINCT(Advertise.AdID), CreatorID, UserMade, AdCatID, Title,"
                                         " Price, Descriptions, Subtitle, City, Street, HouseNum, CreatedAt, UpdatedAt,"
                                         " Images.ImagePath FROM divar.Advertise JOIN divar.Images "
-                                        "ON Advertise.AdID = Images.AdID Order BY CreatedAt")
+                                        "ON Advertise.AdID = Images.AdID Order BY CreatedAt", True)
 
         if request.method == 'POST':
             searched = str(request.form['searchString'])
@@ -55,7 +88,7 @@ def home():
                                             " UpdatedAt, Images.ImagePath FROM divar.Advertise JOIN divar.Images "
                                             "ON Advertise.AdID = Images.AdID "
                                             "WHERE Advertise.Title LIKE '%{}%'"
-                                            "Order BY CreatedAt".format(searched))
+                                            "Order BY CreatedAt".format(searched), True)
 
         page = request.args.get('page', 1, type=int)
         per_page = 12
@@ -72,7 +105,7 @@ def home():
 
 @app.route("/signup/", methods=['GET', 'POST'])
 def sign_up():
-    cities = execute_read_query("SELECT City FROM Region")
+    cities = execute_read_query("SELECT City FROM Region", True)
     add_user = ("INSERT INTO NormalUser"
                 "(IsActive, FirstName, LastName, RegisteredAt, Email, Phone, City, Street, House_num) "
                 "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)")
@@ -110,7 +143,7 @@ def sign_up():
             if user_insertion == 'Done':
                 session['logged_in'] = True
                 session['id'] = user_id
-
+                print(session['id'])
                 return redirect(url_for('home'))
             else:
                 flash('email or phone is duplicate.Try another')
@@ -122,6 +155,8 @@ def sign_up():
 @app.route('/logout')
 def logout():
     session.pop('id', None)
+    session.pop('logged_in', None)
+    # session['logged_in'] = False
     return redirect(url_for('index'))
 
 
@@ -130,12 +165,12 @@ def advertise_detail(adv_id):
     # check if this is here
     if 'logged_in' in session:
         execute_insert_query("INSERT INTO Visit (AdID, UserID) VALUES (%s, %s)", (adv_id, session['id']))
-        advertise = execute_read_query("SELECT * FROM Advertise WHERE AdID={}".format(adv_id))
-        advertise_images = execute_read_query("SELECT * FROM Images WHERE AdID={}".format(adv_id))
+        advertise = execute_read_query("SELECT * FROM Advertise WHERE AdID={}".format(adv_id), False)
+        advertise_images = execute_read_query("SELECT * FROM Images WHERE AdID={}".format(adv_id), True)
         advertise_images = images_path_handler(advertise_images)
         if advertise is None:
             return "Item not found", 404
-        return render_template('ads_detail.html', item=advertise[0], ad_images=advertise_images)
+        return render_template('ads_detail.html', item=advertise, ad_images=advertise_images)
     else:
         return redirect(url_for('sign_up'))
 
@@ -143,8 +178,8 @@ def advertise_detail(adv_id):
 @app.route("/registerAd/", methods=['GET', 'POST'])
 def register_ad():
     if 'logged_in' in session:
-        categories = execute_read_query("SELECT * FROM AdCat")
-        cities = execute_read_query("SELECT City FROM Region")
+        categories = execute_read_query("SELECT * FROM AdCat", True)
+        cities = execute_read_query("SELECT City FROM Region", True)
         add_advertise = ("INSERT INTO Advertise (CreatorID, UserMade, AdCatID, Title, Price, Descriptions,"
                          " Subtitle, City, Street, HouseNum, CreatedAt, UpdatedAt) "
                          "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
@@ -159,7 +194,7 @@ def register_ad():
             ad_city = handle_null_str(request.form['adCity'])
             ad_street = handle_null_str(request.form['adStreet'])
             ad_house_num = handle_null_str(request.form['adHouseNum'])
-
+            print(session['id'])
             data_n_ad = (session['id'], True, ad_cat, ad_title, ad_price, ad_description, ad_subtitle, ad_city,
                          ad_street, ad_house_num, datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                          datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
@@ -191,8 +226,8 @@ def register_ad():
 @app.route("/registerBusiness/", methods=['GET', 'POST'])
 def register_bus():
     if 'logged_in' in session:
-        categories = execute_read_query("SELECT * FROM BusCat")
-        cities = execute_read_query("SELECT City FROM Region")
+        categories = execute_read_query("SELECT * FROM BusCat", True)
+        cities = execute_read_query("SELECT City FROM Region", True)
         add_business = ("INSERT INTO Business (UserID, IsActive, BusName,"
                         " BusCatID, City, Street, HouseNum) VALUES (%s, %s, %s, %s, %s, %s, %s)")
 
@@ -224,11 +259,10 @@ def register_bus():
         return redirect(url_for('sign_up'))
 
 
-
 @app.route("/reportAd/<int:ad_id>", methods=['GET', 'POST'])
 def report_ad(ad_id):
     if 'logged_in' in session:
-        categories = execute_read_query("SELECT * FROM RepCat")
+        categories = execute_read_query("SELECT * FROM RepCat", True)
         add_report = ("INSERT INTO AdReport (AdID, UserID, RepCatID, Content) "
                       "VALUES (%s, %s, %s, %s)")
 
@@ -252,8 +286,12 @@ def report_ad(ad_id):
 @app.route("/updateProfile/", methods=['GET', 'POST'])
 def update_profile():
     if 'logged_in' in session:
-        cities = execute_read_query("SELECT City FROM Region")
-
+        cities = execute_read_query("SELECT City FROM Region", True)
+        current_user = execute_read_query("SELECT FirstName, LastName, Email, Phone, City, Street, House_num"
+                                           " FROM NormalUser WHERE UserID = {}".format(session['id']), False)
+        current_user = convert_to_dict(current_user, ('FirstName', 'LastName', 'Email', 'Phone', 'City',
+                                                        'Street', 'House_num'), drops=[])
+        print(current_user)
         if request.method == 'POST':
             prof_f_name = handle_null_str(request.form['inFName'])
             prof_l_name = handle_null_str(request.form['inLName'])
@@ -263,69 +301,36 @@ def update_profile():
             prof_street = handle_null_str(request.form['inStreet'])
             prof_house_num = handle_null_int(request.form['inHouseNum'])
 
-            # Check all invalid and incomplete user data
-            if prof_f_name:
-                query = ("UPDATE NormalUser"
-                         "SET FirstName = (%s)"
-                         "WHERE UserID= (%s)")
-                data=(prof_f_name, session['id'])
-                updating, user_id = execute_insert_query(query, data)
-            if prof_l_name:
-                query = ("UPDATE NormalUser"
-                         "SET  LastName= %s"
-                         "WHERE UserID= %s")
-                data=(prof_l_name, session['id'])
-                updating, user_id = execute_insert_query(query, data)
+            # Check email first
             if prof_email:
                 if not email_checker(prof_email):
                     flash("Invalid Email")
                     return redirect(url_for('update_profile'))
                 else:
-                    query = ("UPDATE NormalUser"
-                             "SET Email = %s"
-                             "WHERE UserID= %s")
-                    data=(prof_email, session['id'])
-                    updating, user_id = execute_insert_query(query, data)
-                if updating == 'Done':
-                    return redirect(url_for('home'))
-                else:
-                    flash('Email is Duplicate.Try another')
-                    return redirect(url_for('update_profile'))
+                    if user_update_query(prof_email, 'Email') != 'Done':
+                        return redirect(url_for('update_profile'))
+            # Check phone first
             if prof_phone:
                 if not phone_checker(prof_phone):
                     flash("Invalid Phone Number")
                     return redirect(url_for('update_profile'))
                 else:
-                    query = ("UPDATE NormalUser"
-                             "SET Phone = %s"
-                             "WHERE UserID= %s")
-                    data = (prof_email, session['id'])
-                    updating, user_id = execute_insert_query(query, data)
-                    if updating == 'Done':
-                        return redirect(url_for('home'))
-                    else:
-                        flash('Phone Number is duplicate.Try another')
+                    if user_update_query(prof_phone, 'Phone') != 'Done':
                         return redirect(url_for('update_profile'))
-            if prof_city:
-                query = ("UPDATE NormalUser"
-                         "SET City = %s"
-                         "WHERE UserID= %s")
-                data = (prof_city, session['id'])
-                updating, user_id = execute_insert_query(query, data)
-            if prof_street:
-                query = ("UPDATE NormalUser"
-                         "SET Street = %s"
-                         "WHERE UserID= %s")
-                data = (prof_street, session['id'])
-                updating, user_id = execute_insert_query(query, data)
-            if prof_house_num:
-                query = ("UPDATE NormalUser"
-                         "SET House_num = %s"
-                         "WHERE UserID= %s")
-                data = (prof_house_num, session['id'])
-                updating, user_id = execute_insert_query(query, data)
+
+            profile = (prof_f_name, prof_l_name, prof_city, prof_street, prof_house_num)
+            print('profile', profile)
+            names = ('FirstName', 'LastName', 'City', 'Street', 'House_num')
+            for i in range(len(profile)):
+                if profile[i] is not None and current_user[names[i]] != profile[i]:
+                    print(profile[i])
+                    if user_update_query(profile[i], names[i]) != 'Done':
+                        return redirect(url_for('update_profile'))
+
+            return redirect(url_for('home'))
+
         else:  # GET
-            return render_template("updateProfile.html", cities=cities)
+            return render_template("updateProfile.html", cities=cities, curr=current_user)
     else:
         return redirect(url_for('sign_up'))
 
@@ -336,7 +341,8 @@ def update_profile():
 def check_status():
     if 'logged_in' in session:
         ads = execute_read_query("SELECT * FROM divar.AdStatus JOIN divar.Advertise on AdID"
-                                " WHERE UserID= {}".format(session['id']))
+                                " WHERE UserID= {}".format(session['id']), False)
+        print(session['id'])
         print(ads)
         if ads is None   :
             flash("You don't have any advertise")

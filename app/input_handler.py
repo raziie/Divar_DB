@@ -1,6 +1,22 @@
 import re
 
 
+def convert_all_todict():
+    pass
+
+
+def convert_to_dict(input_obj, attributes, drops):
+    out = {}
+    for i in range(len(input_obj)):
+        attr = attributes[i]
+        if i not in drops:
+            if input_obj[i] is None:
+                out[attr] = ''
+            else:
+                out[attr] = input_obj[i]
+    return out
+
+
 def handle_null_str(in_str):
     if in_str == '':
         return None
