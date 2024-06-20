@@ -127,7 +127,7 @@ def sign_up():
         in_street = handle_null_str(request.form['inStreet'])
         in_house_num = handle_null_int(request.form['inHouseNum'])
 
-        data_n_user = (1, in_f_name, in_l_name, datetime.now().strftime("%Y-%m-%d %H:%M:%S"), in_email,
+        data_n_user = (1, in_f_name, in_l_name, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), in_email,
                        in_phone, in_city, in_street, in_house_num)
 
         # Check all invalid and incomplete user data
@@ -204,8 +204,8 @@ def register_ad():
             ad_house_num = handle_null_str(request.form['adHouseNum'])
             print(session['id'])
             data_n_ad = (session['id'], True, ad_cat, ad_title, ad_price, ad_description, ad_subtitle, ad_city,
-                         ad_street, ad_house_num, datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                         datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+                         ad_street, ad_house_num, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                         datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
             # Check all invalid and incomplete user data
             if not ad_title:
