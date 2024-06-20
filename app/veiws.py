@@ -1,11 +1,10 @@
 from app import app
 from flask import render_template, request, url_for, flash, redirect, session
 import mysql.connector
-from datetime import datetime
+import datetime
 from app.input_handler import *
 import dotenv
 import os
-from app.app_objects import *
 
 
 def user_update_query(attribute, attr_name):
@@ -74,21 +73,30 @@ def index():
 
 @app.route("/home/", methods=['GET', 'POST'])
 def home():
-    # TODO: complete navbar for home page and filter advertises
+    # TODO: filter advertises
     if 'logged_in' in session:
-        recent_ads = execute_read_query("SELECT DISTINCT(Advertise.AdID), CreatorID, UserMade, AdCatID, Title,"
-                                        " Price, Descriptions, Subtitle, City, Street, HouseNum, CreatedAt, UpdatedAt,"
-                                        " Images.ImagePath FROM divar.Advertise JOIN divar.Images "
-                                        "ON Advertise.AdID = Images.AdID Order BY CreatedAt", True)
+        recently_advertises = execute_read_query("SELECT DISTINCT(Advertise.AdID), AdCatID, Title,"
+                                                 "Price, Descriptions, Subtitle, City, Street, HouseNum, CreatedAt"
+                                                 " ,Images.ImagePath FROM divar.Advertise JOIN divar.Images "
+                                                 "ON Advertise.AdID = Images.AdID Order BY CreatedAt DESC", True)
 
         if request.method == 'POST':
             searched = str(request.form['searchString'])
-            recent_ads = execute_read_query("SELECT DISTINCT(Advertise.AdID), CreatorID, UserMade, AdCatID, Title,"
-                                            " Price, Descriptions, Subtitle, City, Street, HouseNum, CreatedAt,"
-                                            " UpdatedAt, Images.ImagePath FROM divar.Advertise JOIN divar.Images "
-                                            "ON Advertise.AdID = Images.AdID "
-                                            "WHERE Advertise.Title LIKE '%{}%'"
-                                            "Order BY CreatedAt".format(searched), True)
+            recently_advertises = execute_read_query("SELECT DISTINCT(Advertise.AdID), AdCatID, Title, Price, "
+                                                     "Descriptions, Subtitle, City, Street, HouseNum, CreatedAt,"
+                                                     "Images.ImagePath  FROM divar.Advertise JOIN divar.Images "
+                                                     "ON Advertise.AdID = Images.AdID "
+                                                     "WHERE Advertise.Title LIKE '%{}%'"
+                                                     "Order BY CreatedAt DESCs".format(searched), True)
+
+        recent_ads = []
+        for i in range(len(recently_advertises)):
+            advert = list(recently_advertises[i])
+            delta = datetime.datetime.now() - advert[9]
+            advert[9] = delta.days
+            advert = convert_to_dict(advert, ('AdID', 'AdCatID', 'Title', 'Price', 'Descriptions',
+                                              'Subtitle', 'City', 'Street', 'HouseNum', 'DaysPast', 'Image'), [])
+            recent_ads.append(advert)
 
         page = request.args.get('page', 1, type=int)
         per_page = 12
@@ -96,7 +104,7 @@ def home():
         end = start + per_page
         total_pages = (len(recent_ads) + per_page - 1) // per_page
         items_on_page = recent_ads[start:end]
-
+        print(recent_ads)
         return render_template('home.html', items=items_on_page, total_pages=total_pages, page=page)
 
     else:
@@ -271,7 +279,7 @@ def report_ad(ad_id):
             rep_content = handle_null_str(request.form['repContent'])
 
             data_n_report = (ad_id, session['id'], rep_cat, rep_content)
-            rep_insertion, rep_id = execute_insert_query(add_report, data_n_report)
+            execute_insert_query(add_report, data_n_report)
             return redirect(url_for('home'))
 
         else:  # GET
@@ -280,17 +288,15 @@ def report_ad(ad_id):
         return redirect(url_for('sign_up'))
 
 
-# TODO: FIX THIS FUCKING API AND DEBUG ERRORS. QUERIES ARE WRONG FORMAT
-# incomplete
-# a lot of things to fix
 @app.route("/updateProfile/", methods=['GET', 'POST'])
 def update_profile():
     if 'logged_in' in session:
         cities = execute_read_query("SELECT City FROM Region", True)
-        current_user = execute_read_query("SELECT FirstName, LastName, Email, Phone, City, Street, House_num"
-                                           " FROM NormalUser WHERE UserID = {}".format(session['id']), False)
-        current_user = convert_to_dict(current_user, ('FirstName', 'LastName', 'Email', 'Phone', 'City',
-                                                        'Street', 'House_num'), drops=[])
+        current_user = execute_read_query("SELECT FirstName, LastName, Email, Phone, City, Street,"
+                                          " House_num FROM NormalUser WHERE UserID = {}"
+                                          .format(session['id']), False)
+        current_user = convert_to_dict(current_user, ('FirstName', 'LastName', 'Email', 'Phone',
+                                                      'City', 'Street', 'House_num'), drops=[])
         print(current_user)
         if request.method == 'POST':
             prof_f_name = handle_null_str(request.form['inFName'])
@@ -335,18 +341,37 @@ def update_profile():
         return redirect(url_for('sign_up'))
 
 
-# TODO : A QUERY TO EXTRACT THE VISITS FOR EACH AD
-# should we show the advertize too?
-@app.route("/adStatus/")
-def check_status():
+# incomplete
+@app.route("/advertiseStatus/")
+def advertise_status():
     if 'logged_in' in session:
-        ads = execute_read_query("SELECT * FROM divar.AdStatus JOIN divar.Advertise on AdID"
-                                " WHERE UserID= {}".format(session['id']), False)
-        print(session['id'])
+        # TODO : Complete the query to have status or handle in back or front to have type of status
+        ads = execute_read_query("SELECT AdID, Title, Price, Descriptions, Subtitle, City, Street, HouseNum,"
+                                 "CreatedAt, StatusComment, statID FROM divar.AdStatus JOIN divar.Advertise on "
+                                 "AdStatus.AdID = Advertise.AdID WHERE UserID = {}"
+                                 .format(session['id']), False)
+
         print(ads)
-        if ads is None   :
+        if ads is None:
             flash("You don't have any advertise")
             return redirect(url_for('home'))
+
+        dict_ads = []
+        for i in range(len(ads)):
+            advertise = ads[i]
+            visit_number = execute_read_query("SELECT COUNT(UserID) FROM divar.Visit WHERE AdID = {}"
+                                              .format(advertise[0]), False)
+
+            print(visit_number)
+            advertise.append(visit_number)
+            # method convert a list to a dictionary to better handle in html (you can see usage in user update route)
+            advertise = convert_to_dict(advertise, ('AdID', 'Title', 'Price', 'Descriptions', 'Subtitle',
+                                                    'City', 'Street', 'HouseNum', 'CreatedAt', 'StatusComment',
+                                                    'statID'), [])
+            dict_ads.append(advertise)
+
+        # TODO: pass dict_ads to front to have complete data and also
+        # TODO: (front) complete page so that each advertise be more specific and big
         return render_template('status.html', items=ads)
     else:
         return redirect(url_for('sign_up'))
