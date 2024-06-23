@@ -56,10 +56,7 @@ def phone_checker(phone):
 
 def images_path_handler(images):
     if images is not None:
-        ad_image = []
-        for image in images:
-            ad_image.append(str(image[1]))
-        return ad_image
+        return images
     else:
         return []
 

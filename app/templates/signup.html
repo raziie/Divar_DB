@@ -46,7 +46,7 @@ Sign Up
         <label for="uCity">شهر </label>
         <select id="uCity" name="uCity" class="form-select my-2" required>
           {% for city in cities %}
-          <option value="{{ city[0] }}">{{ city[0] }}</option>
+          <option value="{{ city['City'] }}">{{ city['City'] }}</option>
           {% endfor %}
         </select>
       </div>

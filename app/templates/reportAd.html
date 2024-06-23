@@ -25,7 +25,7 @@ Report Advertise
       <label for="repCat">Category: (default is chosen) </label>
       <select id="repCat" name="repCat" required>
         {% for cat in categories %}
-        <option value="{{ cat[0] }}">{{ cat[1] }}</option>
+        <option value="{{ cat['RepCatID'] }}">{{ cat['Category'] }}</option>
         {% endfor %}
       </select>
     </div>

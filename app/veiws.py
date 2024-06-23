@@ -63,52 +63,12 @@ dotenv.load_dotenv(override=True)
 cnx = mysql.connector.connect(user='root', password=os.getenv('SQL_PASS'),
                               host='127.0.0.1',
                               database='Divar')
-cursor = cnx.cursor()
+cursor = cnx.cursor(dictionary=True)
 
 
 @app.route("/")
 def index():
     return render_template('index.html')
-
-
-@app.route("/home/", methods=['GET', 'POST'])
-def home():
-    # TODO: filter advertises
-    if 'logged_in' in session:
-        recently_advertises = execute_read_query("SELECT DISTINCT(Advertise.AdID), AdCatID, Title,"
-                                                 "Price, Descriptions, Subtitle, City, Street, HouseNum, CreatedAt"
-                                                 " ,Images.ImagePath FROM divar.Advertise JOIN divar.Images "
-                                                 "ON Advertise.AdID = Images.AdID Order BY CreatedAt DESC", True)
-
-        if request.method == 'POST':
-            searched = str(request.form['searchString'])
-            recently_advertises = execute_read_query("SELECT DISTINCT(Advertise.AdID), AdCatID, Title, Price, "
-                                                     "Descriptions, Subtitle, City, Street, HouseNum, CreatedAt,"
-                                                     "Images.ImagePath  FROM divar.Advertise JOIN divar.Images "
-                                                     "ON Advertise.AdID = Images.AdID "
-                                                     "WHERE Advertise.Title LIKE '%{}%'"
-                                                     "Order BY CreatedAt DESCs".format(searched), True)
-
-        recent_ads = []
-        for i in range(len(recently_advertises)):
-            advert = list(recently_advertises[i])
-            delta = datetime.datetime.now() - advert[9]
-            advert[9] = delta.days
-            advert = convert_to_dict(advert, ('AdID', 'AdCatID', 'Title', 'Price', 'Descriptions',
-                                              'Subtitle', 'City', 'Street', 'HouseNum', 'DaysPast', 'Image'), [])
-            recent_ads.append(advert)
-
-        page = request.args.get('page', 1, type=int)
-        per_page = 12
-        start = (page - 1) * per_page
-        end = start + per_page
-        total_pages = (len(recent_ads) + per_page - 1) // per_page
-        items_on_page = recent_ads[start:end]
-        print(recent_ads)
-        return render_template('home.html', items=items_on_page, total_pages=total_pages, page=page)
-
-    else:
-        return redirect(url_for('sign_up'))
 
 
 @app.route("/signup/", methods=['GET', 'POST'])
@@ -117,6 +77,8 @@ def sign_up():
     add_user = ("INSERT INTO NormalUser"
                 "(IsActive, FirstName, LastName, RegisteredAt, Email, Phone, City, Street, House_num) "
                 "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)")
+
+    print(cities)
 
     if request.method == 'POST':
         in_f_name = handle_null_str(request.form['inFName'])
@@ -168,6 +130,42 @@ def logout():
     return redirect(url_for('index'))
 
 
+@app.route("/home/", methods=['GET', 'POST'])
+def home():
+    # TODO: filter advertises
+    if 'logged_in' in session:
+        recent_ads = execute_read_query("SELECT DISTINCT(Advertise.AdID), AdCatID, Title,"
+                                        "Price, Descriptions, Subtitle, City, Street, HouseNum, CreatedAt"
+                                        " ,Images.ImagePath FROM divar.Advertise JOIN divar.Images "
+                                        "ON Advertise.AdID = Images.AdID Order BY CreatedAt DESC", True)
+
+        if request.method == 'POST':
+            searched = str(request.form['searchString'])
+            print(searched)
+            recent_ads = execute_read_query("SELECT DISTINCT(Advertise.AdID), AdCatID, Title, Price, "
+                                            "Descriptions, Subtitle, City, Street, HouseNum, CreatedAt,"
+                                            "Images.ImagePath  FROM divar.Advertise JOIN divar.Images "
+                                            "ON Advertise.AdID = Images.AdID "
+                                            "WHERE Advertise.Title LIKE '%{}%'"
+                                            "Order BY CreatedAt DESC".format(searched), True)
+
+        for i in range(len(recent_ads)):
+            delta = datetime.datetime.now() - recent_ads[i]['CreatedAt']
+            recent_ads[i]['DaysPast'] = delta.days
+
+        page = request.args.get('page', 1, type=int)
+        per_page = 12
+        start = (page - 1) * per_page
+        end = start + per_page
+        total_pages = (len(recent_ads) + per_page - 1) // per_page
+        items_on_page = recent_ads[start:end]
+        print(recent_ads)
+        return render_template('home.html', items=items_on_page, total_pages=total_pages, page=page)
+
+    else:
+        return redirect(url_for('sign_up'))
+
+
 @app.route('/item/<int:adv_id>')
 def advertise_detail(adv_id):
     # check if this is here
@@ -192,6 +190,7 @@ def register_ad():
                          " Subtitle, City, Street, HouseNum, CreatedAt, UpdatedAt) "
                          "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
 
+        print(categories)
         if request.method == 'POST':
             ad_title = handle_null_str(request.form['adTitle'])
             ad_subtitle = handle_null_str(request.form['adSubTitle'])
@@ -273,7 +272,7 @@ def report_ad(ad_id):
         categories = execute_read_query("SELECT * FROM RepCat", True)
         add_report = ("INSERT INTO AdReport (AdID, UserID, RepCatID, Content) "
                       "VALUES (%s, %s, %s, %s)")
-
+        print(categories)
         if request.method == 'POST':
             rep_cat = handle_null_int(request.form['repCat'])
             rep_content = handle_null_str(request.form['repContent'])
@@ -295,8 +294,7 @@ def update_profile():
         current_user = execute_read_query("SELECT FirstName, LastName, Email, Phone, City, Street,"
                                           " House_num FROM NormalUser WHERE UserID = {}"
                                           .format(session['id']), False)
-        current_user = convert_to_dict(current_user, ('FirstName', 'LastName', 'Email', 'Phone',
-                                                      'City', 'Street', 'House_num'), drops=[])
+
         print(current_user)
         if request.method == 'POST':
             prof_f_name = handle_null_str(request.form['inFName'])

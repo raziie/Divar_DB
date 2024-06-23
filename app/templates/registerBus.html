@@ -31,7 +31,7 @@ Register Business
       <label for="busCat">Category: (default is chosen) </label>
       <select id="busCat" name="busCat" required>
         {% for cat in categories %}
-        <option value="{{ cat[0] }}">{{ cat[1] }}</option>
+        <option value="{{ cat['BusCatID'] }}">{{ cat['Category'] }}</option>
         {% endfor %}
       </select>
     </div>
@@ -40,7 +40,7 @@ Register Business
       <label for="busCity">City: (default is chosen) </label>
       <select id="busCity" name="busCity" required>
         {% for city in cities %}
-        <option value="{{ city[0] }}">{{ city[0] }}</option>
+        <option value="{{ city['City'] }}">{{ city['City'] }}</option>
         {% endfor %}
       </select>
     </div>
