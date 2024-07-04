@@ -1,7 +1,8 @@
-from app import app
-from app.veiws import cnx, cursor
+from app import create_app
+import dotenv
+
+dotenv.load_dotenv()
+app = create_app()
 
 if __name__ == '__main__':
-    app.run()
-    cursor.close()
-    cnx.close()
+    app.run(debug=True)
