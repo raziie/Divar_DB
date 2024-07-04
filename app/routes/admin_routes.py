@@ -6,6 +6,7 @@ from app.mysql_db import *
 admin = Blueprint('admin', __name__)
 
 
+
 @admin.route('/get_reports/<int:adv_id>', methods=['GET'])
 def get_reports(adv_id):
     if 'logged_in' in session and session['admin']:
