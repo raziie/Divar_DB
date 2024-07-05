@@ -102,20 +102,19 @@ def report_ad(ad_id):
 def advertise_status():
     if 'logged_in' in session:
         # TODO : Complete the query to have status or handle in back or front to have type of status
-        ads = execute_read_query("SELECT AdID, Title, Price, Descriptions, Subtitle, City, Street, HouseNum,"
+        ads = execute_read_query("SELECT AdStatus.AdID, Title, Price, Descriptions, Subtitle, City, Street, HouseNum,"
                                  "CreatedAt, StatusComment, statID FROM divar.AdStatus JOIN divar.Advertise on "
-                                 "AdStatus.AdID = Advertise.AdID WHERE UserID = {}"
+                                 "AdStatus.AdID = Advertise.AdID WHERE Advertise.CreatorID = {}"
                                  .format(session['user']), False)
 
         print(ads)
         if ads is None:
-            flash("You don't have any advertise")
-            return redirect(url_for('home'))
+            return 'No Advertise Found', 404
 
         dict_ads = []
         for i in range(len(ads)):
             advertise = ads[i]
-            visit_number = execute_read_query("SELECT COUNT(UserID) FROM divar.Visit WHERE AdID = {}"
+            visit_number = execute_read_query("SELECT COUNT(UserID) FROM divar.Visit WHERE Visit.AdID = {}"
                                               .format(advertise[0]), False)
 
             print(visit_number)
@@ -128,6 +127,10 @@ def advertise_status():
 
         # TODO: pass dict_ads to front to have complete data and also
         # TODO: (front) complete page so that each advertise be more specific and big
-        return render_template('status.html', items=ads)
+        print("here",dict_ads)
+        if dict_ads is None:
+            return 'No Advertise Found', 404
+        return dict_ads,200
+        # return render_template('status.html', items=ads)
     else:
-        return redirect(url_for('sign_up'))
+        return 'please sign up first', 401

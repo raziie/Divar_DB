@@ -41,11 +41,16 @@ def home():
         end = start + per_page
         total_pages = (len(recent_ads) + per_page - 1) // per_page
         items_on_page = recent_ads[start:end]
+        data = { 'items': items_on_page}
+        sending = {'data':data,'total_pages':total_pages,'page':page}
         print(recent_ads)
-        return render_template('home.html', items=items_on_page, total_pages=total_pages, page=page)
-
+        if data is None:
+            return "Nothing Found",404
+        return sending,200
+        # return render_template('home.html', items=items_on_page, total_pages=total_pages, page=page)
+        return sending,200
     else:
-        return redirect(url_for('sign_up'))
+        return 'please sign up first', 401
 
 
 @market.route("/registerBusiness/", methods=['GET', 'POST'])
