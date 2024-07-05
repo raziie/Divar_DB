@@ -35,6 +35,7 @@ def home():
             delta = datetime.datetime.now() - recent_ads[i]['CreatedAt']
             recent_ads[i]['DaysPast'] = delta.days
 
+
         page = request.args.get('page', 1, type=int)
         per_page = 12
         start = (page - 1) * per_page
