@@ -72,6 +72,7 @@ def register_ad():
         return 'please sign up first', 401
 
 
+
 @ad.route("/reportAd/<int:ad_id>", methods=['GET', 'POST'])
 def report_ad(ad_id):
     if 'logged_in' in session:
