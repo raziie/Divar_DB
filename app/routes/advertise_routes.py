@@ -102,10 +102,10 @@ def report_ad(ad_id):
 def advertise_status():
     if 'logged_in' in session:
         # TODO : Complete the query to have status or handle in back or front to have type of status
-        ads = execute_read_query("SELECT AdStatus.AdID, Title, Price, Descriptions, Subtitle, City, Street, HouseNum,"
-                                 "CreatedAt, StatusComment, statID FROM divar.AdStatus JOIN divar.Advertise on "
+        print("sssag",session['user'])
+        ads = execute_read_query("SELECT * FROM divar.AdStatus JOIN divar.Advertise on "
                                  "AdStatus.AdID = Advertise.AdID WHERE Advertise.CreatorID = {}"
-                                 .format(session['user']), False)
+                                 .format(session['user']), True)
 
         print(ads)
         if ads is None:
@@ -114,11 +114,13 @@ def advertise_status():
         # dict_ads = []
         for i in range(len(ads)):
             advertise = ads[i]
+            # print("ad",advertise)
+            # print(advertise["AdID"])
             visit_number = execute_read_query("SELECT COUNT(UserID) FROM divar.Visit WHERE Visit.AdID = {}"
-                                              .format(advertise[0]), False)
-
-            print(visit_number)
-            ads[i]['visits'] = visit_number
+                                              .format(advertise["AdID"]), False)
+            print("visit",visit_number)
+            print(visit_number["COUNT(UserID)"])
+            ads[i]['visits'] = visit_number["COUNT(UserID)"]
             # method convert a list to a dictionary to better handle in html (you can see usage in user update route)
             # advertise = convert_to_dict(advertise, ('AdID', 'Title', 'Price', 'Descriptions', 'Subtitle',
             #                                         'City', 'Street', 'HouseNum', 'CreatedAt', 'StatusComment',
@@ -127,7 +129,7 @@ def advertise_status():
 
         # TODO: pass dict_ads to front to have complete data and also
         # TODO: (front) complete page so that each advertise be more specific and big
-        print("here",ads)
+        # print("here",ads)
 
         return jsonify(ads), 200
         # return render_template('status.html', items=ads)
