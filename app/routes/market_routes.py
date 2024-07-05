@@ -11,6 +11,7 @@ def index():
     return 'index page', 200
 
 
+# TODO: didn't change to rest
 @market.route("/home/", methods=['GET', 'POST'])
 def home():
     # TODO: filter advertises

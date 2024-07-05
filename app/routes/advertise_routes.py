@@ -6,7 +6,7 @@ from app.mysql_db import *
 ad = Blueprint('ad', __name__)
 
 
-@ad.route('/detail/<int:adv_id>')
+@ad.route('/detail/<int:adv_id>', methods=['GET'])
 def advertise_detail(adv_id):
     if 'logged_in' in session:
         execute_insert_query("INSERT INTO Visit (AdID, UserID) VALUES (%s, %s)", (adv_id, session['user']))
@@ -28,6 +28,8 @@ def register_ad():
                          " Subtitle, City, Street, HouseNum, CreatedAt, UpdatedAt) "
                          "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
 
+        add_status = ("INSERT INTO AdStatus (AdID, StatusComment, UpdatedAt, statID)"
+                         "VALUES (%d, %s, %s, %d)")
         if request.method == 'POST':
             ad_title = handle_null_str(request.form['adTitle'])
             ad_subtitle = handle_null_str(request.form['adSubTitle'])
@@ -42,7 +44,6 @@ def register_ad():
             data_n_ad = (session['user'], True, ad_cat, ad_title, ad_price, ad_description, ad_subtitle, ad_city,
                          ad_street, ad_house_num, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                          datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-
             # Check all invalid and incomplete user data
             if not ad_title:
                 return 'Please enter Title', 400
@@ -52,7 +53,9 @@ def register_ad():
                 return 'you have entered house number.Please enter street name too', 400
             else:
                 ad_insertion, ad_id = execute_insert_query(add_advertise, data_n_ad)
-                if ad_insertion == 'Done':
+                data_status = (ad_id, "", datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 3)
+                status_insertion = execute_insert_query(add_status, data_status)
+                if ad_insertion == 'Done' and status_insertion== 'Done':
                     return jsonify(request.form), 201
                 elif "Column 'AdCatID' cannot be null" in ad_insertion:
                     return 'please select category', 401
