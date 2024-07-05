@@ -46,7 +46,7 @@ def home():
         print(recent_ads)
         if data is None:
             return "Nothing Found",404
-        return sending,200
+        return jsonify(sending),200
         # return render_template('home.html', items=items_on_page, total_pages=total_pages, page=page)
         return sending,200
     else:

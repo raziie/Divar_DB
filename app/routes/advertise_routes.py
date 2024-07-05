@@ -111,26 +111,25 @@ def advertise_status():
         if ads is None:
             return 'No Advertise Found', 404
 
-        dict_ads = []
+        # dict_ads = []
         for i in range(len(ads)):
             advertise = ads[i]
             visit_number = execute_read_query("SELECT COUNT(UserID) FROM divar.Visit WHERE Visit.AdID = {}"
                                               .format(advertise[0]), False)
 
             print(visit_number)
-            advertise.append(visit_number)
+            ads[i]['visits'] = visit_number
             # method convert a list to a dictionary to better handle in html (you can see usage in user update route)
-            advertise = convert_to_dict(advertise, ('AdID', 'Title', 'Price', 'Descriptions', 'Subtitle',
-                                                    'City', 'Street', 'HouseNum', 'CreatedAt', 'StatusComment',
-                                                    'statID'), [])
-            dict_ads.append(advertise)
+            # advertise = convert_to_dict(advertise, ('AdID', 'Title', 'Price', 'Descriptions', 'Subtitle',
+            #                                         'City', 'Street', 'HouseNum', 'CreatedAt', 'StatusComment',
+            #                                         'statID'), [])
+            # dict_ads.append(advertise)
 
         # TODO: pass dict_ads to front to have complete data and also
         # TODO: (front) complete page so that each advertise be more specific and big
-        print("here",dict_ads)
-        if dict_ads is None:
-            return 'No Advertise Found', 404
-        return dict_ads,200
+        print("here",ads)
+
+        return jsonify(ads), 200
         # return render_template('status.html', items=ads)
     else:
         return 'please sign up first', 401
