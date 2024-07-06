@@ -1,4 +1,4 @@
-from flask import request, session, jsonify, Blueprint
+from flask import request, session, jsonify, Blueprint, render_template, url_for, flash, redirect
 import datetime
 from app.input_handler import *
 from app.mysql_db import *
@@ -24,7 +24,7 @@ def user_request_otp():
             user_id = execute_read_query("SELECT UserID FROM NormalUser WHERE Phone ='{}'".format(in_phone), False)
 
         if user_id is None:
-            return 'please sign up first', 401
+            return redirect(url_for('index'))
 
         otp = generate_otp()
         if redis_cache.exists('N'+str(user_id['UserID'])):
@@ -93,6 +93,7 @@ def admin_validate_otp(user_id):
         return 'Invalid OTP', 400
 
 
+#changed
 @auth.route("/signup/", methods=['GET', 'POST'])
 def sign_up():
     if request.method == 'POST':
@@ -113,15 +114,25 @@ def sign_up():
 
         # Check all invalid and incomplete user data
         if not in_email and not in_phone:
-            return 'One of Email or Phone is required!', 401
+            # return 'One of Email or Phone is required!', 401
+            flash('One of Email or Phone is required!')
+            return redirect(url_for('auth.sign_up'))
         elif not in_f_name or not in_l_name:
-            return 'You should enter yor name completely!', 401
+            # return 'You should enter yor name completely!', 401
+            flash('You should enter yor name completely!')
+            return redirect(url_for('auth.sign_up'))
         elif not email_checker(in_email):
-            return 'Invalid Email', 401
+            # return 'Invalid Email', 401
+            flash('Invalid Email')
+            return redirect(url_for('auth.sign_up'))
         elif not phone_checker(in_phone):
-            return 'Invalid Phone Number', 401
+            # return 'Invalid Phone Number', 401
+            flash('Invalid Phone Number')
+            return redirect(url_for('auth.sign_up'))
         elif in_street is None and in_house_num is not None:
-            return 'Please enter street name!', 401
+            # return 'Please enter street name!', 401
+            flash('Please enter street name!')
+            return redirect(url_for('auth.sign_up'))
         else:
             user_insertion, user_id = execute_insert_query(add_user, data_n_user)
             if user_insertion == 'Done':
@@ -129,17 +140,19 @@ def sign_up():
                 session['user'] = user_id
                 session['admin'] = False
                 print(session['user'])
-                return jsonify(request.form), 200
+                return redirect(url_for('market.home'))
             elif user_insertion == 'Duplicate':
-                return 'email or phone is duplicate.Try another', 401
+                flash('email or phone is duplicate.Try another')
+                return redirect(url_for('auth.sign_up'))
             else:
-                return user_insertion, 401
+                return redirect(url_for('auth.sign_up'))
     else:   # GET
         cities = execute_read_query("SELECT City FROM Region", True)
         print(cities)
-        return jsonify(cities)
+        return render_template("signup.html", cities=cities)
 
 
+#changed
 @auth.route('/logout')
 def logout():
     session.pop('user', None)
@@ -147,6 +160,6 @@ def logout():
     session.pop('admin', None)
     session.clear()
     print('logged out')
-    return 'logged out successfully', 200
+    return redirect(url_for('auth.sign_up'))
 
 

@@ -6,12 +6,15 @@ from app.mysql_db import *
 market = Blueprint('market', __name__)
 
 
+#changed
 @market.route("/")
 def index():
-    return 'index page', 200
+    # return 'index page', 200
+    return render_template("index.html")
 
 
-# TODO: didn't change to rest
+
+#changed
 @market.route("/home/", methods=['GET', 'POST'])
 def home():
     # TODO: filter advertises
@@ -46,14 +49,19 @@ def home():
         sending = {'data':data,'total_pages':total_pages,'page':page}
         print(recent_ads)
         if data is None:
-            return "Nothing Found",404
-        return jsonify(sending),200
-        # return render_template('home.html', items=items_on_page, total_pages=total_pages, page=page)
-        return sending,200
+            # return "Nothing Found",404
+            flash('Nothing Found')
+            return redirect(url_for('market.home'))
+        # return jsonify(sending),200
+        return render_template('home.html', items=items_on_page, total_pages=total_pages, page=page)
+        # return sending,200
     else:
-        return 'please sign up first', 401
+        flash('Please Sign up First')
+        return redirect(url_for('market.index'))
+        # return 'please sign up first', 401
 
 
+#changed but has bug
 @market.route("/registerBusiness/", methods=['GET', 'POST'])
 def register_bus():
     if 'logged_in' in session:
@@ -70,19 +78,29 @@ def register_bus():
 
             # Check all invalid and incomplete user data
             if not bus_name:
-                return 'Please Enter your Business Name', 400
+                # return 'Please Enter your Business Name', 400
+                flash('Please Enter your Business Name')
+                return redirect(url_for('market.register_bus'))
             elif bus_street is None and bus_house_num is not None:
-                return 'you entered house number.Please enter street name', 400
+                # return 'you entered house number.Please enter street name', 400
+                flash('You Entered House Number.Please Enter Street Name')
+                return redirect(url_for('market.register_bus'))
             else:
                 bus_insertion, bus_id = execute_insert_query(add_business, data_n_business)
                 if bus_insertion == 'Done':
-                    return jsonify(request.form), 201
+                    # return jsonify(request.form), 201
+                    return redirect(url_for('market.home'))
                 else:
-                    return bus_insertion, 401
+                    # return bus_insertion, 401
+                    flash('Business Name is duplicate.Try another')
+                    return redirect(url_for('register_bus'))
         else:  # GET
             categories = execute_read_query("SELECT * FROM BusCat", True)
             cities = execute_read_query("SELECT City FROM Region", True)
             data = {'categories': categories, 'cities': cities}
-            return jsonify(data), 200
+            # return jsonify(data), 200
+            return render_template("registerBus.html", cities=cities, categories=categories)
     else:
-        return 'please sign up first', 401
+        # return 'please sign up first', 401
+        flash('Please Sign up First')
+        return redirect(url_for('market.index'))

@@ -6,6 +6,7 @@ from app.mysql_db import *
 ad = Blueprint('ad', __name__)
 
 
+#changed
 @ad.route('/detail/<int:adv_id>', methods=['GET'])
 def advertise_detail(adv_id):
     if 'logged_in' in session:
@@ -15,12 +16,18 @@ def advertise_detail(adv_id):
         advertise_images = images_path_handler(advertise_images)
         advertise['images'] = advertise_images
         if advertise is None:
-            return 'advertise not found', 404
-        return jsonify(advertise), 200
+            # return 'advertise not found', 404
+            flash('Advertise not Found')
+            return redirect(url_for('market.home.html'))
+        # return jsonify(advertise), 200
+        # return render_template('home.html', items=ads[-10:])
+        return render_template('ads_detail.html', item=advertise[0], ad_images=advertise_images)
     else:
-        return 'please sign up first', 401
+        flash('Please Sign up First')
+        return redirect(url_for('index'))
 
 
+#changed
 @ad.route("/registerAd/", methods=['GET', 'POST'])
 def register_ad():
     if 'logged_in' in session:
@@ -30,6 +37,10 @@ def register_ad():
 
         add_status = ("INSERT INTO AdStatus (AdID, StatusComment, UpdatedAt, statID)"
                          "VALUES (%d, %s, %s, %d)")
+        # TODO: NOT CHECKED
+        businesses = execute_read_query("SELECT * FROM Business WHERE UserID = {}".format(session['user']), True)
+        print("businesse",businesses)
+
         if request.method == 'POST':
             ad_title = handle_null_str(request.form['adTitle'])
             ad_subtitle = handle_null_str(request.form['adSubTitle'])
@@ -46,30 +57,49 @@ def register_ad():
                          datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
             # Check all invalid and incomplete user data
             if not ad_title:
-                return 'Please enter Title', 400
+                # return 'Please enter Title', 400
+                flash("Please enter Title")
+                return redirect(url_for('ad.register_ad'))
             elif not ad_price:
-                return 'Please enter the Price', 400
+                # return 'Please enter the Price', 400
+                flash('Please enter the Price')
+                return redirect(url_for('ad.register_ad'))
             elif ad_street is None and ad_house_num is not None:
-                return 'you have entered house number.Please enter street name too', 400
+                # return 'you have entered house number.Please enter street name too', 400
+                flash('Please enter street name!')
+                return redirect(url_for('ad.register_ad'))
             else:
                 ad_insertion, ad_id = execute_insert_query(add_advertise, data_n_ad)
                 data_status = (ad_id, "", datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 3)
-                status_insertion = execute_insert_query(add_status, data_status)
+                status_insertion ,status_id = execute_insert_query(add_status, data_status)
+                # print("a",ad_insertion)
+                # print("b",status_insertion)
+                #TODO: IT HAS "Not all parameters were used in the SQL statement" ERROR FOR status_insertion
                 if ad_insertion == 'Done' and status_insertion== 'Done':
-                    return jsonify(request.form), 201
+                    # return jsonify(request.form), 201
+                    return redirect(url_for('market.home'))
                 elif "Column 'AdCatID' cannot be null" in ad_insertion:
-                    return 'please select category', 401
+                    # return 'please select category', 401
+                    flash('Please Select Category for Advertise Category')
+                    return redirect(url_for('ad.register_ad'))
                 elif "Column 'Price' cannot be null" in ad_insertion:
-                    return 'please select category', 401
+                    # return 'please select category', 401
+                    flash('Price can not be Null')
+                    return redirect(url_for('ad.register_ad'))
                 else:
-                    return ad_insertion, 401
+                    # return ad_insertion, 401
+                    flash('Something went Wrong')
+                    return redirect(url_for('ad.register_ad'))
         else:  # GET
             categories = execute_read_query("SELECT * FROM AdCat", True)
             cities = execute_read_query("SELECT City FROM Region", True)
             data = {'cities': cities, 'categories': categories}
-            return jsonify(data), 200
+            # return jsonify(data), 200
+            return render_template("registerAd.html", cities=cities, categories=categories)
     else:
-        return 'please sign up first', 401
+        # return 'please sign up first', 401
+        flash('Please Sign up First')
+        return redirect(url_for('auth.sign_up'))
 
 
 

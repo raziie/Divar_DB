@@ -22,6 +22,7 @@ def user_update_query(attribute, attr_name):
         return updating
 
 
+#TODO: ERROR IN HTML
 @profile.route("/updateProfile/", methods=['GET', 'PUT'])
 def update_profile():
     if 'logged_in' in session:
@@ -44,15 +45,15 @@ def update_profile():
                     return "Invalid Email", 401
                 else:
                     if user_update_query(prof_email, 'Email') != 'Done':
-                        return redirect(url_for('update_profile'))
+                        return redirect(url_for('profile.update_profile'))
             # Check phone first
             if prof_phone:
                 if not phone_checker(prof_phone):
                     flash("Invalid Phone Number")
-                    return redirect(url_for('update_profile'))
+                    return redirect(url_for('profile.update_profile'))
                 else:
                     if user_update_query(prof_phone, 'Phone') != 'Done':
-                        return redirect(url_for('update_profile'))
+                        return redirect(url_for('profile.update_profile'))
 
             prof = (prof_f_name, prof_l_name, prof_city, prof_street, prof_house_num)
             print('profile', prof)
@@ -61,12 +62,15 @@ def update_profile():
                 if prof[i] is not None and current_user[names[i]] != prof[i]:
                     print(prof[i])
                     if user_update_query(prof[i], names[i]) != 'Done':
-                        return redirect(url_for('update_profile'))
+                        return redirect(url_for('profile.update_profile'))
 
-            return redirect(url_for('home'))
+            return redirect(url_for('market.home'))
 
         else:  # GET
-            data = {'cities': cities, 'current user':current_user}
-            return jsonify(data), 200
+            # data = {'cities': cities, 'current user':current_user}
+            # return jsonify(data), 200
+            return render_template("updateProfile.html", cities=cities)
     else:
-        return 'please sign up first', 401
+        # return 'please sign up first', 401
+        flash('Please Sign up First')
+        return redirect(url_for('market.index'))

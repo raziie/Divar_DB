@@ -18,7 +18,7 @@ Sign Up
   {% endif %}
   {% endwith %}
   <main class="form-signin w-100 m-auto d-flex align-items-center justify-content-center">
-    <form action="{{ url_for('sign_up') }}" method="post"
+    <form action="{{ url_for('auth.sign_up') }}" method="post"
       class="bg-success my-5 p-3 text-white bg-opacity-50 rounded col-sm-8 col-lg-5">
       <div class="form-group">
         <label for="inEmail">ایمیل</label>

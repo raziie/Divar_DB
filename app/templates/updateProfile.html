@@ -17,8 +17,9 @@
   {% endif %}
 {% endwith %}
 
+<!--TODO:WHAT IS CURR? ERROR-->
 <main class="form-signin w-100 m-auto">
-  <form action="{{ url_for('update_profile') }}" method="post">
+  <form action="{{ url_for('profile.update_profile') }}" method="post">
     <br>
     <div class="form-group">
       <label for="inFName">First Name</label>
