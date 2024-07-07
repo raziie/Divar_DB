@@ -84,7 +84,6 @@ def check_ad(adv_id):
         modify_status_insertion, status_id = execute_insert_query(add_modify_satus, data_modify)
 
         if modify_status_insertion=='Done' and status_insertion == 'Done':
-            print('fone')
             return 'Checked',204
         else:
             return 'Something Is Wrong',400

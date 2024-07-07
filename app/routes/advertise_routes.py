@@ -21,7 +21,7 @@ def advertise_detail(adv_id):
             return redirect(url_for('market.home.html'))
         # return jsonify(advertise), 200
         # return render_template('home.html', items=ads[-10:])
-        return render_template('ads_detail.html', item=advertise[0], ad_images=advertise_images)
+        return render_template('ads_detail.html', item=advertise, ad_images=advertise_images)
     else:
         flash('Please Sign up First')
         return redirect(url_for('index'))
@@ -103,6 +103,7 @@ def register_ad():
 
 
 
+#changed
 @ad.route("/reportAd/<int:ad_id>", methods=['GET', 'POST'])
 def report_ad(ad_id):
     if 'logged_in' in session:
@@ -115,16 +116,24 @@ def report_ad(ad_id):
             data_n_report = (ad_id, session['user'], rep_cat, rep_content)
             report_insertion, _ = execute_insert_query(add_report, data_n_report)
             if report_insertion == 'Done':
-                return jsonify(request.form), 201
+                # return jsonify(request.form), 201
+                return redirect(url_for('market.home'))
             elif "foreign key constraint" in report_insertion:
-                return 'advertise not found', 404
+                # return 'advertise not found', 404
+                flash('Advertise not Found')
+                return redirect(url_for('market.home'))
             else:
-                return report_insertion
+                # return report_insertion
+                flash("Nothing can't be duplicate.Try another")
+                return redirect(url_for('ad.report_ad'))
         else:  # GET
             categories = execute_read_query("SELECT * FROM RepCat", True)
-            return jsonify(categories), 200
+            # return jsonify(categories), 200
+            return render_template("reportAd.html", categories=categories, AdID=ad_id)
     else:
-        return 'please sign up first', 401
+        # return 'please sign up first', 401
+        flash('Please Sign up First')
+        return redirect(url_for('market.index'))
 
 
 # incomplete
@@ -132,7 +141,7 @@ def report_ad(ad_id):
 def advertise_status():
     if 'logged_in' in session:
         # TODO : Complete the query to have status or handle in back or front to have type of status
-        print("sssag",session['user'])
+        # print("hey",session['user'])
         ads = execute_read_query("SELECT * FROM divar.AdStatus JOIN divar.Advertise on "
                                  "AdStatus.AdID = Advertise.AdID WHERE Advertise.CreatorID = {}"
                                  .format(session['user']), True)
