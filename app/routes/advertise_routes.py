@@ -6,31 +6,29 @@ from app.mysql_db import *
 ad = Blueprint('ad', __name__)
 
 
-#changed
+# checked by m
 @ad.route('/detail/<int:adv_id>', methods=['GET'])
 def advertise_detail(adv_id):
-    if 'logged_in' in session:
+    if 'logged_in' in session and not session['admin']:
         execute_insert_query("INSERT INTO Visit (AdID, UserID) VALUES (%s, %s)", (adv_id, session['user']))
         advertise = execute_read_query("SELECT * FROM Advertise WHERE AdID={}".format(adv_id), False)
         advertise_images = execute_read_query("SELECT * FROM Images WHERE AdID={}".format(adv_id), True)
         advertise_images = images_path_handler(advertise_images)
         advertise['images'] = advertise_images
         if advertise is None:
-            # return 'advertise not found', 404
             flash('Advertise not Found')
             return redirect(url_for('market.home.html'))
-        # return jsonify(advertise), 200
-        # return render_template('home.html', items=ads[-10:])
+
         return render_template('ads_detail.html', item=advertise, ad_images=advertise_images)
     else:
-        flash('Please Sign up First')
-        return redirect(url_for('index'))
+        flash('Please sign up or login first')
+        return redirect(url_for('market.index'))
 
 
-#changed
+# checked
 @ad.route("/registerAd/", methods=['GET', 'POST'])
 def register_ad():
-    if 'logged_in' in session:
+    if 'logged_in' in session and not session['admin']:
         add_advertise = ("INSERT INTO Advertise (CreatorID, UserMade, AdCatID, Title, Price, Descriptions,"
                          " Subtitle, City, Street, HouseNum, CreatedAt, UpdatedAt) "
                          "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
@@ -39,7 +37,7 @@ def register_ad():
                          "VALUES (%s, %s, %s, %s)")
         # TODO: NOT CHECKED
         businesses = execute_read_query("SELECT * FROM Business WHERE UserID = {}".format(session['user']), True)
-        print("businesse",businesses)
+        print("business", businesses)
 
         if request.method == 'POST':
             ad_title = handle_null_str(request.form['adTitle'])
@@ -72,10 +70,10 @@ def register_ad():
                 ad_insertion, ad_id = execute_insert_query(add_advertise, data_n_ad)
                 data_status = (ad_id, " ", datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 3)
                 status_insertion, status_id = execute_insert_query(add_status, data_status)
-                print("a",ad_insertion)
-                print("b",status_insertion)
-                #TODO: IT HAS "Not all parameters were used in the SQL statement" ERROR FOR status_insertion
-                if ad_insertion == 'Done' and status_insertion== 'Done':
+                print("a", ad_insertion)
+                print("b", status_insertion)
+                # TODO: IT HAS "Not all parameters were used in the SQL statement" ERROR FOR status_insertion
+                if ad_insertion == 'Done' and status_insertion == 'Done':
                     # return jsonify(request.form), 201
                     return redirect(url_for('market.home'))
                 elif "Column 'AdCatID' cannot be null" in ad_insertion:
@@ -98,15 +96,14 @@ def register_ad():
             return render_template("registerAd.html", cities=cities, categories=categories)
     else:
         # return 'please sign up first', 401
-        flash('Please Sign up First')
-        return redirect(url_for('auth.sign_up'))
+        flash('Please sign up or login first')
+        return redirect(url_for('market.index'))
 
 
-
-#changed
+# checked by m
 @ad.route("/reportAd/<int:ad_id>", methods=['GET', 'POST'])
 def report_ad(ad_id):
-    if 'logged_in' in session:
+    if 'logged_in' in session and not session['admin']:
         if request.method == 'POST':
             add_report = ("INSERT INTO AdReport (AdID, UserID, RepCatID, Content) "
                           "VALUES (%s, %s, %s, %s)")
@@ -116,23 +113,18 @@ def report_ad(ad_id):
             data_n_report = (ad_id, session['user'], rep_cat, rep_content)
             report_insertion, _ = execute_insert_query(add_report, data_n_report)
             if report_insertion == 'Done':
-                # return jsonify(request.form), 201
-                return redirect(url_for('market.home'))
+                return redirect('http://127.0.0.1:5000/ad/detail/' + str(ad_id))
             elif "foreign key constraint" in report_insertion:
-                # return 'advertise not found', 404
                 flash('Advertise not Found')
                 return redirect(url_for('market.home'))
             else:
-                # return report_insertion
-                flash("Nothing can't be duplicate.Try another")
+                flash("Something went wrong.Try another")
                 return redirect(url_for('ad.report_ad'))
         else:  # GET
             categories = execute_read_query("SELECT * FROM RepCat", True)
-            # return jsonify(categories), 200
             return render_template("reportAd.html", categories=categories, AdID=ad_id)
     else:
-        # return 'please sign up first', 401
-        flash('Please Sign up First')
+        flash('Please sign up or login first')
         return redirect(url_for('market.index'))
 
 
@@ -157,7 +149,7 @@ def advertise_status():
             # print(advertise["AdID"])
             visit_number = execute_read_query("SELECT COUNT(UserID) FROM divar.Visit WHERE Visit.AdID = {}"
                                               .format(advertise["AdID"]), False)
-            print("visit",visit_number)
+            print("visit", visit_number)
             print(visit_number["COUNT(UserID)"])
             ads[i]['visits'] = visit_number["COUNT(UserID)"]
             # method convert a list to a dictionary to better handle in html (you can see usage in user update route)

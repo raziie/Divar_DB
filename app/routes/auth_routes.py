@@ -1,4 +1,4 @@
-from flask import request, session, jsonify, Blueprint, render_template, url_for, flash, redirect
+from flask import request, session, Blueprint, render_template, url_for, flash, redirect
 import datetime
 from app.input_handler import *
 from app.mysql_db import *
@@ -7,6 +7,7 @@ import random
 import json
 
 auth = Blueprint('auth', __name__)
+# This file is completely checked by M
 
 
 def generate_otp(length=6):
@@ -32,13 +33,12 @@ def user_request_otp():
             redis_cache.delete('N'+str(user_id['UserID']))
 
         redis_cache.setex('N'+str(user_id['UserID']), 60000, otp)
-        print('in 1 in post' , otp)
+        print('in 1 in post', otp)
         return redirect(url_for('auth.user_validate_otp', messages=json.dumps({'otp': otp,
                                                                                'user_id': user_id['UserID'],
                                                                                'email': request.form['inEmail'],
                                                                                'phone': request.form['inPhone']})))
-            # jsonify({'otp': otp, 'user_id': user_id['UserID'], 'email': in_email, 'Phone': in_phone,
-            #             'message': 'OTP generated successfully'}), 200
+
     elif request.method == 'GET':
         return render_template("./auth/user_login.html")
 
@@ -52,10 +52,10 @@ def user_validate_otp():
         email = data['email']
         phone = data['phone']
         stored_otp = redis_cache.get('N' + str(user_id))
-        print('in 2 in get' , stored_otp)
+        print('in 2 in get', stored_otp)
         flash('OTP is: ' + stored_otp)
         return render_template("./auth/user_login_val.html", user={'email': email, 'phone': phone,
-                                                               'user_id': user_id})
+                                                                   'user_id': user_id})
 
     elif request.method == 'POST':
         user_id = handle_null_str(request.form['user_id'])
@@ -63,7 +63,7 @@ def user_validate_otp():
         email = request.form['inEmail']
         phone = request.form['inPhone']
         stored_otp = redis_cache.get('N' + str(user_id))
-        print('in 2 in post - strored , in', stored_otp, input_otp)
+        print('in 2 in post - stored , in', stored_otp, input_otp)
 
         if stored_otp is None:
             flash('OTP expired or not set')
@@ -119,10 +119,10 @@ def admin_validate_otp():
         email = data['email']
         phone = data['phone']
         stored_otp = redis_cache.get('A' + str(user_id))
-        print('in 2 in get' , stored_otp)
+        print('in 2 in get', stored_otp)
         flash('OTP is: ' + stored_otp)
         return render_template("./auth/user_login_val.html", user={'email': email, 'phone': phone,
-                                                               'user_id': user_id})
+                                                                   'user_id': user_id})
 
     elif request.method == 'POST':
         user_id = handle_null_str(request.form['user_id'])
@@ -131,7 +131,7 @@ def admin_validate_otp():
         email = request.form['inEmail']
         phone = request.form['inPhone']
         stored_otp = redis_cache.get('A' + str(user_id))
-        print('in 2 in post - strored , in', stored_otp, input_otp)
+        print('in 2 in post - stored , in', stored_otp, input_otp)
 
         if stored_otp is None:
             flash('OTP expired or not set')
@@ -151,7 +151,6 @@ def admin_validate_otp():
             return redirect(url_for('admin.home'))
 
 
-#changed
 @auth.route("/signup/", methods=['GET', 'POST'])
 def sign_up():
     if request.method == 'POST':
@@ -216,7 +215,6 @@ def sign_up():
             return render_template("auth/signup.html", cities=cities)
 
 
-#changed
 @auth.route('/logout')
 def logout():
     session.pop('user', None)
@@ -225,5 +223,3 @@ def logout():
     session.clear()
     print('logged out')
     return redirect(url_for('market.index'))
-
-

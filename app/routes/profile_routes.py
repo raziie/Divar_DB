@@ -1,9 +1,9 @@
-from flask import render_template, request, url_for, flash, redirect, session, jsonify, Blueprint
-import datetime
+from flask import render_template, request, url_for, flash, redirect, session, Blueprint
 from app.input_handler import *
 from app.mysql_db import *
 
 profile = Blueprint('profile', __name__)
+# This file is completely checked by M
 
 
 def user_update_query(attribute, attr_name, user_type):
@@ -25,6 +25,7 @@ def user_update_query(attribute, attr_name, user_type):
         return updating
 
 
+# TODO: not checked for admin user but the required code is written
 @profile.route("/updateProfile/", methods=['GET', 'POST'])
 def update_profile():
     if 'logged_in' in session:
@@ -80,4 +81,3 @@ def update_profile():
     else:
         flash('Please sign up or login first')
         return redirect(url_for('market.index'))
-
