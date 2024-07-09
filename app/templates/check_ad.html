@@ -1,0 +1,47 @@
+{% extends 'admin_base.html' %}
+{% block title %}
+Register Advertise
+{% endblock %}
+{% block content %}
+
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<ul class=flashes>
+  {% for message in messages %}
+  <div class="alert alert-warning">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    {{ message }}
+  </div>
+  {% endfor %}
+</ul>
+{% endif %}
+{% endwith %}
+
+<main class="form-signin w-100 m-auto">
+  <form action="{{ url_for('admin.check_ad',ad_id=AdID)) }}" method="post">
+    <br>
+
+    <div class="form-group">
+      <label for="comment">Comment</label>
+      <input type="text" class="form-control" name="comment" id="comment" placeholder="Enter Comment"
+        value="{{ request.form['comment'] }}" required>
+    </div>
+
+    <div class="form-group">
+      <label for="statID">City: (default is chosen) </label>
+      <select id="statID" name="statID" required>
+        <option value=0>DELETED</option>
+        <option value=1>CONFIRMED</option>
+        <option value=2>REJECTED</option>
+        <option value=3>WAITING</option>
+      </select>
+    </div>
+
+    <div class="form-group form-check">
+      <input type="checkbox" class="form-check-input" id="exampleCheck1" required>
+      <label class="form-check-label" for="exampleCheck1">Check me out</label>
+    </div>
+    <button type="submit" class="btn btn-primary m-2" value="Submit">Submit</button>
+  </form>
+</main>
+{% endblock %}
