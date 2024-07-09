@@ -8,6 +8,7 @@ welcome
   <button class="btn btn-secondary rounded-pill px-3 mx-1" type="button">
     <a href="{{ url_for('auth.sign_up') }}">Sign Up</a>
   </button>
-  <button class="btn btn-light rounded-pill px-3 mx-1" type="button">Log in</button>
+  <button class="btn btn-light rounded-pill px-3 mx-1" type="button">
+    <a href="{{ url_for('auth.user_request_otp') }}"> Log in</a></button>
 </section>
 {% endblock %}

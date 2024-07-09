@@ -36,7 +36,7 @@ def register_ad():
                          "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
 
         add_status = ("INSERT INTO AdStatus (AdID, StatusComment, UpdatedAt, statID)"
-                         "VALUES (%d, %s, %s, %d)")
+                         "VALUES (%s, %s, %s, %s)")
         # TODO: NOT CHECKED
         businesses = execute_read_query("SELECT * FROM Business WHERE UserID = {}".format(session['user']), True)
         print("businesse",businesses)
@@ -70,10 +70,10 @@ def register_ad():
                 return redirect(url_for('ad.register_ad'))
             else:
                 ad_insertion, ad_id = execute_insert_query(add_advertise, data_n_ad)
-                data_status = (ad_id, "", datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 3)
-                status_insertion ,status_id = execute_insert_query(add_status, data_status)
-                # print("a",ad_insertion)
-                # print("b",status_insertion)
+                data_status = (ad_id, " ", datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 3)
+                status_insertion, status_id = execute_insert_query(add_status, data_status)
+                print("a",ad_insertion)
+                print("b",status_insertion)
                 #TODO: IT HAS "Not all parameters were used in the SQL statement" ERROR FOR status_insertion
                 if ad_insertion == 'Done' and status_insertion== 'Done':
                     # return jsonify(request.form), 201

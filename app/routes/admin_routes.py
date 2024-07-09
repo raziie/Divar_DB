@@ -5,50 +5,50 @@ from app.mysql_db import *
 
 admin = Blueprint('admin', __name__)
 
-@market.route("/admin_home/", methods=['GET', 'POST'])
-def admin_home():
-    # TODO: filter advertises
-    if 'logged_in' in session:
-        recent_ads = execute_read_query("SELECT DISTINCT(Advertise.AdID), AdCatID, Title,"
-                                        "Price, Descriptions, Subtitle, City, Street, HouseNum, CreatedAt"
-                                        " ,Images.ImagePath FROM divar.Advertise JOIN divar.Images "
-                                        "ON Advertise.AdID = Images.AdID Order BY CreatedAt DESC", True)
-
-        if request.method == 'POST':
-            searched = str(request.form['searchString'])
-            print(searched)
-            recent_ads = execute_read_query("SELECT DISTINCT(Advertise.AdID), AdCatID, Title, Price, "
-                                            "Descriptions, Subtitle, City, Street, HouseNum, CreatedAt,"
-                                            "Images.ImagePath  FROM divar.Advertise JOIN divar.Images "
-                                            "ON Advertise.AdID = Images.AdID "
-                                            "WHERE Advertise.Title LIKE '%{}%'"
-                                            "Order BY CreatedAt DESC".format(searched), True)
-
-        for i in range(len(recent_ads)):
-            delta = datetime.datetime.now() - recent_ads[i]['CreatedAt']
-            recent_ads[i]['DaysPast'] = delta.days
-
-
-        page = request.args.get('page', 1, type=int)
-        per_page = 12
-        start = (page - 1) * per_page
-        end = start + per_page
-        total_pages = (len(recent_ads) + per_page - 1) // per_page
-        items_on_page = recent_ads[start:end]
-        data = { 'items': items_on_page}
-        sending = {'data':data,'total_pages':total_pages,'page':page}
-        print(recent_ads)
-        if data is None:
-            # return "Nothing Found",404
-            flash('Nothing Found')
-            return redirect(url_for('admin.admin_home'))
-        # return jsonify(sending),200
-        return render_template('admin_home.html', items=items_on_page, total_pages=total_pages, page=page)
-        # return sending,200
-    else:
-        flash('Please Sign up First')
-        return redirect(url_for('market.index'))
-        # return 'please sign up first', 401
+# @market.route("/admin_home/", methods=['GET', 'POST'])
+# def admin_home():
+#     # TODO: filter advertises
+#     if 'logged_in' in session:
+#         recent_ads = execute_read_query("SELECT DISTINCT(Advertise.AdID), AdCatID, Title,"
+#                                         "Price, Descriptions, Subtitle, City, Street, HouseNum, CreatedAt"
+#                                         " ,Images.ImagePath FROM divar.Advertise JOIN divar.Images "
+#                                         "ON Advertise.AdID = Images.AdID Order BY CreatedAt DESC", True)
+#
+#         if request.method == 'POST':
+#             searched = str(request.form['searchString'])
+#             print(searched)
+#             recent_ads = execute_read_query("SELECT DISTINCT(Advertise.AdID), AdCatID, Title, Price, "
+#                                             "Descriptions, Subtitle, City, Street, HouseNum, CreatedAt,"
+#                                             "Images.ImagePath  FROM divar.Advertise JOIN divar.Images "
+#                                             "ON Advertise.AdID = Images.AdID "
+#                                             "WHERE Advertise.Title LIKE '%{}%'"
+#                                             "Order BY CreatedAt DESC".format(searched), True)
+#
+#         for i in range(len(recent_ads)):
+#             delta = datetime.datetime.now() - recent_ads[i]['CreatedAt']
+#             recent_ads[i]['DaysPast'] = delta.days
+#
+#
+#         page = request.args.get('page', 1, type=int)
+#         per_page = 12
+#         start = (page - 1) * per_page
+#         end = start + per_page
+#         total_pages = (len(recent_ads) + per_page - 1) // per_page
+#         items_on_page = recent_ads[start:end]
+#         data = { 'items': items_on_page}
+#         sending = {'data':data,'total_pages':total_pages,'page':page}
+#         print(recent_ads)
+#         if data is None:
+#             # return "Nothing Found",404
+#             flash('Nothing Found')
+#             return redirect(url_for('admin.admin_home'))
+#         # return jsonify(sending),200
+#         return render_template('admin_home.html', items=items_on_page, total_pages=total_pages, page=page)
+#         # return sending,200
+#     else:
+#         flash('Please Sign up First')
+#         return redirect(url_for('market.index'))
+#         # return 'please sign up first', 401
 
 
 #TODO: ADD HTML AND CHANGE TO TEMPLATE RENDER

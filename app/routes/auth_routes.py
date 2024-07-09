@@ -4,7 +4,7 @@ from app.input_handler import *
 from app.mysql_db import *
 from app.utils import redis_cache
 import random
-
+import json
 
 auth = Blueprint('auth', __name__)
 
@@ -13,7 +13,7 @@ def generate_otp(length=6):
     return ''.join(random.choices('0123456789', k=length))
 
 
-@auth.route('/user_request_otp/', methods=['POST'])
+@auth.route('/user_request_otp/', methods=['POST', 'GET'])
 def user_request_otp():
     if request.method == 'POST':
         in_phone = handle_null_str(request.form['inPhone'])
@@ -31,26 +31,55 @@ def user_request_otp():
             redis_cache.delete('N'+str(user_id['UserID']))
 
         redis_cache.setex('N'+str(user_id['UserID']), 30000, otp)
-        return jsonify({'otp': otp, 'user_id': user_id['UserID'], 'email': in_email, 'Phone': in_phone,
-                        'message': 'OTP generated successfully'}), 200
+        print('in 1 in post' , otp)
+        return redirect(url_for('auth.user_validate_otp', messages=json.dumps({'otp': otp,
+                                                                               'user_id': user_id['UserID'],
+                                                                               'email': request.form['inEmail'],
+                                                                               'phone': request.form['inPhone']})))
+            # jsonify({'otp': otp, 'user_id': user_id['UserID'], 'email': in_email, 'Phone': in_phone,
+            #             'message': 'OTP generated successfully'}), 200
+    elif request.method == 'GET':
+        return render_template("./auth/user_login.html")
 
 
-@auth.route('/user_validate_otp/<user_id>', methods=['POST'])
-def user_validate_otp(user_id):
-    input_otp = handle_null_str(request.form['otp'])
-    stored_otp = redis_cache.get('N' + str(user_id))
+@auth.route('/user_validate_otp/', methods=['POST', 'GET'])
+def user_validate_otp():
+    if request.method == 'GET':
+        data = json.loads(request.args.get('messages'))
+        print(data)
+        user_id = handle_null_str(data['user_id'])
+        email = data['email']
+        phone = data['phone']
+        stored_otp = redis_cache.get('N' + str(user_id))
+        print('in 2 in get' , stored_otp)
+        flash('OTP is: ' + stored_otp)
+        return render_template("./auth/user_login_val.html", user={'email': email, 'phone': phone,
+                                                               'user_id': user_id})
 
-    if stored_otp is None:
-        return jsonify({'message': 'OTP expired or not set'}), 400
+    elif request.method == 'POST':
+        user_id = handle_null_str(request.form['user_id'])
+        input_otp = request.form['inOTP']
+        email = request.form['inEmail']
+        phone = request.form['inPhone']
+        stored_otp = redis_cache.get('N' + str(user_id))
+        print('in 2 in post - strored , in', stored_otp, input_otp)
 
-    if input_otp == stored_otp:
-        redis_cache.delete('N'+str(user_id))
-        session['logged_in'] = True
-        session['user'] = user_id
-        session['admin'] = False
-        return 'OTP validated successfully', 200
-    else:
-        return 'Invalid OTP', 400
+        if stored_otp is None:
+            flash('OTP expired or not set')
+            return redirect(url_for('auth.user_request_otp'))
+
+        if input_otp != stored_otp:
+            flash('wrong OTP. OTP is: ' + stored_otp)
+            return render_template("./auth/user_login_val.html", user={'email': email, 'phone': phone,
+                                                                       'userId': user_id})
+        else:
+            redis_cache.delete('N'+str(user_id))
+            session['logged_in'] = True
+            session['user'] = user_id
+            session['admin'] = False
+            return redirect(url_for('market.home'))
+
+            # return 'Invalid OTP', 400
 
 
 @auth.route('/admin_request_otp/', methods=['POST'])
@@ -160,6 +189,6 @@ def logout():
     session.pop('admin', None)
     session.clear()
     print('logged out')
-    return redirect(url_for('auth.sign_up'))
+    return redirect(url_for('market.index'))
 
 
