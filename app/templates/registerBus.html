@@ -4,19 +4,6 @@ Register Business
 {% endblock %}
 {% block content %}
 
-{% with messages = get_flashed_messages() %}
-{% if messages %}
-<ul class=flashes>
-  {% for message in messages %}
-  <div class="alert alert-warning">
-    <button type="button" class="close" data-dismiss="alert">&times;</button>
-    {{ message }}
-  </div>
-  {% endfor %}
-</ul>
-{% endif %}
-{% endwith %}
-
 <main class="form-signin w-100 m-auto">
   <form action="{{ url_for('market.register_bus') }}" method="post">
     <br>

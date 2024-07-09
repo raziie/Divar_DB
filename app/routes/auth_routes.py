@@ -79,7 +79,7 @@ def user_validate_otp():
             session['logged_in'] = True
             session['user'] = user_id
             session['admin'] = False
-            return redirect(url_for('admin.home'))
+            return redirect(url_for('market.home'))
 
 
 @auth.route('/admin_request_otp/', methods=['POST', 'GET'])
@@ -205,9 +205,15 @@ def sign_up():
             else:
                 return redirect(url_for('auth.sign_up'))
     else:   # GET
-        cities = execute_read_query("SELECT City FROM Region", True)
-        print(cities)
-        return render_template("signup.html", cities=cities)
+        if 'logged_in' in session:
+            if session['admin']:
+                return redirect(url_for('admin.home'))
+            else:
+                return redirect(url_for('market.home'))
+        else:
+            cities = execute_read_query("SELECT City FROM Region", True)
+            print(cities)
+            return render_template("auth/signup.html", cities=cities)
 
 
 #changed
