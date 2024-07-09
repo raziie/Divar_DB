@@ -1,6 +1,6 @@
 {% extends 'index_base.html' %}
 {% block title %}
-Sign Up
+Login
 {% endblock %}
 {% block content %}
 
@@ -42,7 +42,13 @@ Sign Up
 
       {% endif %}
       <div class="d-grid gap-2">
-        <button type="submit" class="btn btn-success m-2" value="Submit">ورود</button>
+        <button type="submit" formaction="{{ url_for('auth.user_validate_otp') }}"
+                class="btn btn-success m-2" value="Submit">ورود</button>
+      </div>
+
+      <div class="d-grid gap-2">
+        <button type="submit" formaction="{{ url_for('auth.admin_validate_otp') }}"
+                class="btn btn-success m-2" value="Submit">ورود به عنوان ادمین</button>
       </div>
     </form>
   </main>

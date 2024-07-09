@@ -24,13 +24,14 @@ def user_request_otp():
             user_id = execute_read_query("SELECT UserID FROM NormalUser WHERE Phone ='{}'".format(in_phone), False)
 
         if user_id is None:
-            return redirect(url_for('index'))
+            flash('user did not found')
+            return redirect(url_for('auth.user_request_otp'))
 
         otp = generate_otp()
         if redis_cache.exists('N'+str(user_id['UserID'])):
             redis_cache.delete('N'+str(user_id['UserID']))
 
-        redis_cache.setex('N'+str(user_id['UserID']), 30000, otp)
+        redis_cache.setex('N'+str(user_id['UserID']), 60000, otp)
         print('in 1 in post' , otp)
         return redirect(url_for('auth.user_validate_otp', messages=json.dumps({'otp': otp,
                                                                                'user_id': user_id['UserID'],
@@ -69,20 +70,19 @@ def user_validate_otp():
             return redirect(url_for('auth.user_request_otp'))
 
         if input_otp != stored_otp:
-            flash('wrong OTP. OTP is: ' + stored_otp)
+            flash('Invalid OTP. OTP is: ' + stored_otp)
             return render_template("./auth/user_login_val.html", user={'email': email, 'phone': phone,
                                                                        'userId': user_id})
-        else:
+        elif input_otp == stored_otp:
+            print('in N delete')
             redis_cache.delete('N'+str(user_id))
             session['logged_in'] = True
             session['user'] = user_id
             session['admin'] = False
-            return redirect(url_for('market.home'))
-
-            # return 'Invalid OTP', 400
+            return redirect(url_for('admin.home'))
 
 
-@auth.route('/admin_request_otp/', methods=['POST'])
+@auth.route('/admin_request_otp/', methods=['POST', 'GET'])
 def admin_request_otp():
     if request.method == 'POST':
         in_phone = handle_null_str(request.form['inPhone'])
@@ -93,33 +93,62 @@ def admin_request_otp():
             user_id = execute_read_query("SELECT AUserID FROM AdminUser WHERE Phone ='{}'".format(in_phone), False)
 
         if user_id is None:
-            return 'you are not allowed', 401
+            flash('user did not found')
+            return redirect(url_for('auth.admin_request_otp'))
 
         otp = generate_otp()
-        if redis_cache.exists('A'+str(user_id['AUserID'])):
-            redis_cache.delete('A'+str(user_id['AUserID']))
+        if redis_cache.exists('A' + str(user_id['AUserID'])):
+            redis_cache.delete('A' + str(user_id['AUserID']))
 
-        redis_cache.setex('A'+str(user_id['AUserID']), 30000, otp)
-        return jsonify({'otp': otp, 'user_id': user_id['AUserID'], 'email': in_email, 'Phone': in_phone,
-                        'message': 'OTP generated successfully'}), 200
+        redis_cache.setex('A' + str(user_id['AUserID']), 60000, otp)
+        print('in 1 in post', otp)
+        return redirect(url_for('auth.admin_validate_otp', messages=json.dumps({'otp': otp,
+                                                                                'user_id': user_id['AUserID'],
+                                                                                'email': request.form['inEmail'],
+                                                                                'phone': request.form['inPhone']})))
+    elif request.method == 'GET':
+        return render_template("./auth/user_login.html")
 
 
-@auth.route('/admin_validate_otp/<user_id>', methods=['POST'])
-def admin_validate_otp(user_id):
-    input_otp = handle_null_str(request.form['otp'])
-    stored_otp = redis_cache.get('A' + str(user_id))
+@auth.route('/admin_validate_otp/', methods=['POST', 'GET'])
+def admin_validate_otp():
+    if request.method == 'GET':
+        data = json.loads(request.args.get('messages'))
+        print(data)
+        user_id = handle_null_str(data['user_id'])
+        email = data['email']
+        phone = data['phone']
+        stored_otp = redis_cache.get('A' + str(user_id))
+        print('in 2 in get' , stored_otp)
+        flash('OTP is: ' + stored_otp)
+        return render_template("./auth/user_login_val.html", user={'email': email, 'phone': phone,
+                                                               'user_id': user_id})
 
-    if stored_otp is None:
-        return jsonify({'message': 'OTP expired or not set'}), 400
+    elif request.method == 'POST':
+        user_id = handle_null_str(request.form['user_id'])
+        print(user_id)
+        input_otp = request.form['inOTP']
+        email = request.form['inEmail']
+        phone = request.form['inPhone']
+        stored_otp = redis_cache.get('A' + str(user_id))
+        print('in 2 in post - strored , in', stored_otp, input_otp)
 
-    if input_otp == stored_otp:
-        redis_cache.delete('A'+str(user_id))
-        session['logged_in'] = True
-        session['user'] = user_id
-        session['admin'] = True
-        return 'OTP validated successfully', 200
-    else:
-        return 'Invalid OTP', 400
+        if stored_otp is None:
+            flash('OTP expired or not set')
+            return redirect(url_for('auth.user_request_otp'))
+
+        if input_otp != stored_otp:
+            print('here')
+            flash('wrong OTP. OTP is: ' + stored_otp)
+            return render_template("./auth/user_login_val.html", user={'email': email, 'phone': phone,
+                                                                       'userId': user_id})
+        elif input_otp == stored_otp:
+            print('in A delete')
+            redis_cache.delete('A'+str(user_id))
+            session['logged_in'] = True
+            session['user'] = user_id
+            session['admin'] = True
+            return redirect(url_for('admin.home'))
 
 
 #changed
