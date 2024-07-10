@@ -91,8 +91,8 @@ Register Advertise
                 <form action="{{ url_for('ad.register_ad') }}" method="post" class="mx-1 mx-md-4 d-flex flex-column justify-content-between">
 
                   <div class="d-flex flex-row align-items-center mb-4">
-                    <i class="fa fa-header fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
                     <div data-mdb-input-init class="form-outline flex-fill mb-0 d-flex align-items-center gap-4">
+                      <i class="fa fa-header fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
                       <label class="form-label" for="adTitle">Title</label>
                       <input type="text" class="form-control border-none border-bottom rounded-0" name="adTitle" id="adTitle" placeholder="Enter Title"
                         value="{{ request.form['adTitle'] }}" required>
@@ -100,8 +100,8 @@ Register Advertise
                   </div>
 
                   <div class="d-flex flex-row align-items-center mb-4">
-                    <i class="fa fa-heading fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
                     <div data-mdb-input-init class="form-outline flex-fill mb-0 d-flex align-items-center gap-4">
+                      <i class="fa fa-heading fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
                       <label class="form-label" for="adSubTitle">Subtitle</label>
                       <input type="text" class="form-control border-none border-bottom rounded-0" name="adSubTitle" id="adSubTitle"
                         placeholder="Enter SubTitle" value="{{ request.form['adSubTitle'] }}">
@@ -109,8 +109,8 @@ Register Advertise
                   </div>
 
                   <div class="d-flex flex-row align-items-center mb-4">
-                    <i class="fa fa-info-circle fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
                     <div data-mdb-input-init class="form-outline flex-fill mb-0 d-flex align-items-center gap-4">
+                      <i class="fa fa-info-circle fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
                       <label class="form-label" for="adDesc">Descriptions</label>
                       <input type="text" class="form-control border-none border-bottom rounded-0" id="adDesc" name="adDesc" placeholder="Enter Descriptions"
                         value="{{ request.form['adDesc'] }}">
@@ -118,8 +118,8 @@ Register Advertise
                   </div>
 
                   <div class="d-flex flex-row align-items-center mb-4">
-                    <i class="fa fa-money fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
                     <div data-mdb-input-init class="form-outline flex-fill mb-0 d-flex align-items-center gap-4">
+                      <i class="fa fa-money fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
                       <label class="form-label" for="adPrice">Price</label>
                       <input type="number" step="0.01" class="form-control border-none border-bottom rounded-0" name="adPrice" id="adPrice"
                         placeholder="Price" value="{{ request.form['adPrice'] }}" required>
@@ -127,8 +127,8 @@ Register Advertise
                   </div>
 
                   <div class="d-flex flex-row align-items-center mb-4">
-                    <i class="fa fa-picture-o fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
                     <div data-mdb-input-init class="form-outline flex-fill mb-0 d-flex align-items-center gap-4">
+                      <i class="fa fa-picture-o fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
                       <label class="form-label" for="adImage">Image</label>
                       <input type="file" class="form-control border-none border-bottom rounded-0" name="adImage" id="adImage" placeholder="Image"
                         value="{{ request.form['inLName'] }}">
@@ -136,8 +136,8 @@ Register Advertise
                   </div>
 
                   <div class="d-flex flex-row align-items-center mb-4">
-                    <i class="fa fa-list-alt fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
                     <div data-mdb-input-init class="form-outline flex-fill mb-0 d-flex align-items-center gap-4">
+                      <i class="fa fa-list-alt fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
                       <label class="form-check-label" for="adCat">Category: </label>
                       <select id="adCat" name="adCat" class="form-select my-2 border-none border-bottom rounded-0" required>
                         {% for cat in categories %}
@@ -148,8 +148,8 @@ Register Advertise
                   </div>
 
                   <div class="form-check d-flex flex-row align-items-center ps-0 mb-4">
-                    <i class="fa fa-city fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
                     <div data-mdb-input-init class="form-outline flex-fill mb-0 d-flex align-items-center gap-4">
+                      <i class="fa fa-city fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
                       <label class="form-check-label" for="adCity">City: </label>
                       <select id="adCity" name="adCity" class="form-select my-2 border-none border-bottom rounded-0" required>
                         {% for city in cities %}
@@ -160,8 +160,8 @@ Register Advertise
                   </div>
 
                   <div class="d-flex flex-row align-items-center mb-4">
-                    <i class="fa fa-road fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
                     <div data-mdb-input-init class="form-outline flex-fill mb-0 d-flex align-items-center gap-4">
+                      <i class="fa fa-road fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
                       <label class="form-label" for="adStreet">Street</label>
                       <input type="text" class="form-control border-none border-bottom rounded-0" name="adStreet" id="adStreet" placeholder="street"
                         value="{{ request.form['inStreet'] }}">
@@ -169,8 +169,8 @@ Register Advertise
                   </div>
 
                   <div class="d-flex flex-row align-items-center mb-4">
-                    <i class="fas fa-house fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
                     <div data-mdb-input-init class="form-outline flex-fill mb-0 d-flex align-items-center gap-4">
+                      <i class="fas fa-house fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
                       <label class="form-label" for="adHouseNum">Number</label>
                       <input type="number" class="form-control border-none border-bottom rounded-0" name="adHouseNum" id="adHouseNum"
                         placeholder="House Number" value="{{ request.form['inHouseNum'] }}">

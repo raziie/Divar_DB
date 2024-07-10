@@ -4,32 +4,86 @@ Login
 {% endblock %}
 {% block content %}
 
-<div class="container">
+<!-- <div class="container">
   <main class="form-signin w-100 m-auto d-flex align-items-center justify-content-center">
     <form action="{{ url_for('auth.user_request_otp') }}" method="post"
       class="bg-success my-5 p-3 text-white bg-opacity-50 rounded col-sm-8 col-lg-5">
       <div class="form-group">
-        <label for="inEmail">ایمیل</label>
-        <input type="email" class="form-control my-2" name="inEmail" id="inEmail" placeholder="ایمیل..."
+        <label for="inEmail">Email</label>
+        <input type="email" class="form-control my-2" name="inEmail" id="inEmail" placeholder="Enter your Email"
           value="{{ request.form['inEmail'] }}">
       </div>
       <div class="form-group">
-        <label for="inPhone">شماره تلفن</label>
+        <label for="inPhone">Phone</label>
         <input type="tel" class="form-control my-2" id="inPhone" name="inPhone" pattern="[0-9]{11}"
-          placeholder="تلفن..." value="{{ request.form['inPhone'] }}">
+          placeholder="Enter your Phone" value="{{ request.form['inPhone'] }}">
       </div>
 
       <div class="d-grid gap-2">
         <button type="submit" formaction="{{ url_for('auth.user_request_otp') }}"
-                class="btn btn-success m-2" value="Submit">ورود</button>
+                class="btn btn-success m-2" value="Submit">Login</button>
       </div>
 
       <div class="d-grid gap-2">
         <button type="submit" formaction="{{ url_for('auth.admin_request_otp') }}"
-                class="btn btn-success m-2" value="Submit">ورود به عنوان ادمین</button>
+                class="btn btn-success m-2" value="Submit">Login as Admin</button>
       </div>
 
     </form>
   </main>
-</div>
+</div> -->
+
+<section>
+  <div class="container">
+    <div class="row d-flex justify-content-center align-items-center">
+      <div class="col-lg-10 col-xl-9 mx-5 my-3 p-5">
+        <div class="card text-black" style="border-radius: 25px;">
+          <div class="card-body p-md-3">
+            <div class="row justify-content-center">
+              <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
+
+                <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">Login</p>
+
+                <form action="{{ url_for('auth.user_request_otp') }}" method="post" class="mx-1 mx-md-4">
+
+                  <div class="d-flex flex-row align-items-center mb-2">
+                    <div data-mdb-input-init class="form-outline flex-fill mb-0">
+                      <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
+                      <label class="form-label" for="inEmail">Email</label>
+                      <input type="email" class="form-control my-2" name="inEmail" id="inEmail"
+                        placeholder="Enter your Email" value="{{ request.form['inEmail'] }}">
+                    </div>
+                  </div>
+
+                  <div class="d-flex flex-row align-items-center mb-2">
+                    <div data-mdb-input-init class="form-outline flex-fill mb-0">
+                      <i class="fas fa-phone fa-lg me-3 fa-fw"></i>
+                      <label class="form-label" for="inPhone">Phone</label>
+                      <input type="tel" class="form-control my-2" id="inPhone" name="inPhone" pattern="[0-9]{11}"
+                        placeholder="Enter your Phone" value="{{ request.form['inPhone'] }}">
+                    </div>
+                  </div>
+
+                  <div class="d-flex flex-column gap-4 mx-4 mb-3 mb-lg-4">
+                    <button type="submit" formaction="{{ url_for('auth.user_request_otp') }}"
+                      class="btn btn-primary btn-lg" value="Submit">Login</button>
+                    <button type="submit" formaction="{{ url_for('auth.admin_request_otp') }}"
+                      class="btn btn-primary btn-lg" value="Submit">Login as Admin</button>
+                  </div>
+                </form>
+              </div>
+              <div class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
+
+                <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-registration/draw1.webp"
+                  class="img-fluid" alt="Sample image">
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 {% endblock %}

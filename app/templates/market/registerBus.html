@@ -66,9 +66,9 @@ Register Business
                 <form action="{{ url_for('market.register_bus') }}" method="post" class="mx-1 mx-md-4 d-flex flex-column justify-content-between">
 
                   <div class="d-flex flex-row align-items-center mb-4">
-                    <i
-                      class="fa fa-header fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
                     <div data-mdb-input-init class="form-outline flex-fill mb-0 d-flex align-items-center gap-4">
+                      <i
+                        class="fa fa-header fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
                       <label class="form-label" for="busName">Business Name</label>
                       <input type="text" class="form-control my-2 border-none border-bottom rounded-0" name="busName" id="busName"
                         placeholder="Enter Business Name" value="{{ request.form['busName'] }}" required>
@@ -76,9 +76,9 @@ Register Business
                   </div>
 
                   <div class="d-flex flex-row align-items-center mb-4">
-                    <i
-                      class="fa fa-list-alt fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
                     <div data-mdb-input-init class="form-outline flex-fill mb-0 d-flex align-items-center gap-4">
+                      <i
+                        class="fa fa-list-alt fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
                       <label class="form-check-label" for="busCat">Category:</label>
                       <select id="busCat" name="busCat" class="form-select my-2 border-none border-bottom rounded-0" required>
                         {% for cat in categories %}
@@ -89,9 +89,9 @@ Register Business
                   </div>
 
                   <div class="d-flex flex-row align-items-center mb-4">
-                    <i
-                      class="fa fa-city fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
                     <div data-mdb-input-init class="form-outline flex-fill mb-0 d-flex align-items-center gap-4">
+                      <i
+                        class="fa fa-city fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
                       <label class="form-check-label" for="busCity">City: </label>
                       <select id="busCity" name="busCity" class="form-select my-2 border-none border-bottom rounded-0" required>
                         {% for city in cities %}
@@ -102,9 +102,9 @@ Register Business
                   </div>
 
                   <div class="d-flex flex-row align-items-center mb-4">
-                    <i
-                      class="fa fa-road fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
                     <div data-mdb-input-init class="form-outline flex-fill mb-0 d-flex align-items-center gap-4">
+                    <i
+                    class="fa fa-road fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
                       <label for="busStreet">Street</label>
                       <input type="text" class="form-control my-2 border-none border-bottom rounded-0" name="busStreet" id="busStreet" placeholder="street"
                         value="{{ request.form['busStreet'] }}">
@@ -112,9 +112,9 @@ Register Business
                   </div>
 
                   <div class="d-flex flex-row align-items-center mb-4">
-                    <i
-                      class="fas fa-house fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
                     <div data-mdb-input-init class="form-outline flex-fill mb-0 d-flex align-items-center gap-4">
+                      <i
+                        class="fas fa-house fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
                       <label for="busHouseNum">House Number</label>
                       <input type="number" class="form-control my-2 border-none border-bottom rounded-0" name="busHouseNum" id="busHouseNum"
                         placeholder="House Number" value="{{ request.form['busHouseNum'] }}">
