@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
 {% block title %}
-    Update Profile
+Update Profile
 {% endblock %}
 {% block content %}
 
-<main class="form-signin w-100 m-auto">
+<!-- <main class="form-signin w-100 m-auto">
   <form action="{{ url_for('profile.update_profile') }}" method="post">
     <br>
     <div class="form-group">
@@ -56,5 +56,115 @@
     </div>
     <button type="submit" class="btn btn-primary m-2" value="Submit">Submit</button>
   </form>
-</main>
+</main> -->
+
+<section>
+  <div class="container">
+    <div class="row d-flex justify-content-center align-items-center">
+      <div class="col-lg-10 col-xl-9 mx-5 my-3 p-5">
+        <div class="card text-black" style="border-radius: 25px;">
+          <div class="card-body p-md-3 rounded-4" style="background-color: #dfe1e6">
+            <div class="row justify-content-center">
+              <div class="col-md-10 col-lg-4 d-flex align-items-center">
+                <!-- <img src="{{url_for('static', filename='images/bus.jpg')}}" class="img-fluid" alt="Sample image"> -->
+                <div class="text-center p-5">
+                  <img src="https://bootdey.com/img/Content/avatar/avatar7.png" class="rounded-circle avatar img-circle img-thumbnail" alt="avatar">                  
+                  <input type="file" class="form-control mt-4">
+                </div>
+              </div>
+              <div class="col-md-10 col-lg-8">
+                <p class="text-center h3 fw-bold mb-5 mx-1 mx-md-4 mt-4">Edit Profile</p>
+                <form action="{{ url_for('profile.update_profile') }}" method="post"
+                  class="mx-1 mx-md-4 d-flex flex-column justify-content-between">
+
+                  <div class="d-flex flex-row align-items-center mb-4">
+                    <i
+                      class="fa fa-user fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
+                    <div data-mdb-input-init class="form-outline flex-fill mb-0 d-flex align-items-center gap-4">
+                      <label class="form-label" for="inFName">First Name</label>
+                      <input type="text" class="form-control my-2 border-none border-bottom rounded-0" name="inFName"
+                        id="inFName" placeholder="{{ curr['FirstName'] }}" value="{{ request.form['inFName'] }}">
+                    </div>
+                  </div>
+
+                  <div class="d-flex flex-row align-items-center mb-4">
+                    <i
+                      class="fa fa-user fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
+                    <div data-mdb-input-init class="form-outline flex-fill mb-0 d-flex align-items-center gap-4">
+                      <label class="form-label" for="inLName">Last Name</label>
+                      <input type="text" class="form-control my-2 border-none border-bottom rounded-0" name="inLName"
+                        id="inLName" placeholder="{{ curr['LastName'] }}" value="{{ request.form['inLName'] }}">
+                    </div>
+                  </div>
+
+                  <div class="d-flex flex-row align-items-center mb-4">
+                    <i
+                      class="fa fa-envelope fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
+                    <div data-mdb-input-init class="form-outline flex-fill mb-0 d-flex align-items-center gap-4">
+                      <label class="form-label" for="inEmail">Email address</label>
+                      <input type="email" class="form-control my-2 border-none border-bottom rounded-0" name="inEmail"
+                        id="inEmail" placeholder="{{ curr['Email'] }}" value="{{ request.form['inEmail'] }}">
+                    </div>
+                  </div>
+
+                  <div class="d-flex flex-row align-items-center mb-4">
+                    <i
+                      class="fas fa-phone fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
+                    <div data-mdb-input-init class="form-outline flex-fill mb-0 d-flex align-items-center gap-4">
+                      <label class="form-label" for="inPhone">Phone</label>
+                      <input type="tel" class="form-control my-2 border-none border-bottom rounded-0" id="inPhone"
+                        name="inPhone" pattern="[0-9]{11}" placeholder="{{ curr['Phone'] }}"
+                        value="{{ request.form['inPhone'] }}">
+                    </div>
+                  </div>
+
+                  <div class="d-flex flex-row align-items-center mb-4">
+                    <i
+                      class="fa fa-city fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
+                    <div data-mdb-input-init class="form-outline flex-fill mb-0 d-flex align-items-center gap-4">
+                      <label class="form-check-label" for="uCity">City: </label>
+                      <select id="uCity" name="uCity" class="form-select my-2 border-none border-bottom rounded-0">
+                        {% for city in cities %}
+                        {% if city['City'] == curr['City'] %}
+                        <option value="{{ city['City'] }}" selected>{{ city['City'] }}</option>
+                        {% else %}
+                        <option value="{{ city['City'] }}">{{ city['City'] }}</option>
+                        {% endif %}
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="d-flex flex-row align-items-center mb-4">
+                    <i
+                      class="fa fa-road fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
+                    <div data-mdb-input-init class="form-outline flex-fill mb-0 d-flex align-items-center gap-4">
+                      <label class="form-label" for="inStreet">Street</label>
+                      <input type="text" class="form-control my-2 border-none border-bottom rounded-0" name="inStreet"
+                        id="inStreet" placeholder="{{ curr['Street'] }}" value="{{ request.form['inStreet'] }}">
+                    </div>
+                  </div>
+
+                  <div class="d-flex flex-row align-items-center mb-4">
+                    <i
+                      class="fas fa-house fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
+                    <div data-mdb-input-init class="form-outline flex-fill mb-0 d-flex align-items-center gap-4">
+                      <label class="form-label" for="inHouseNum">House Number</label>
+                      <input type="number" class="form-control my-2 border-none border-bottom rounded-0"
+                        name="inHouseNum" id="inHouseNum" placeholder="{{ curr['House_num'] }}"
+                        value="{{ request.form['inHouseNum'] }}">
+                    </div>
+                  </div>
+                  <div class="d-flex justify-content-center mx-4 my-3 mb-lg-4">
+                    <button value="Submit" type="submit" class="btn btn-primary btn-lg w-75">Change</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 {% endblock %}
