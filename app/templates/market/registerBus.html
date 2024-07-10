@@ -4,7 +4,7 @@ Register Business
 {% endblock %}
 {% block content %}
 
-<main class="form-signin w-100 m-auto">
+<!-- <main class="form-signin w-100 m-auto">
   <form action="{{ url_for('market.register_bus') }}" method="post">
     <br>
 
@@ -50,5 +50,91 @@ Register Business
     </div>
     <button type="submit" class="btn btn-primary m-2" value="Submit">Submit</button>
   </form>
-</main>
+</main> -->
+
+<section>
+  <div class="container">
+    <div class="row d-flex justify-content-center align-items-center">
+      <div class="col-lg-10 col-xl-9 mx-5 my-3 p-5">
+        <div class="card text-black" style="border-radius: 25px;">
+          <div class="card-body p-md-3 rounded-4" style="background-color: #dfe1e6">
+            <div class="row justify-content-center">
+              <div class="col-md-10 col-lg-6 order-2 order-lg-1">
+
+                <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">Create your Business</p>
+
+                <form action="{{ url_for('market.register_bus') }}" method="post" class="mx-1 mx-md-4 d-flex flex-column justify-content-between">
+
+                  <div class="d-flex flex-row align-items-center mb-4">
+                    <i
+                      class="fa fa-header fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
+                    <div data-mdb-input-init class="form-outline flex-fill mb-0 d-flex align-items-center gap-4">
+                      <label class="form-label" for="busName">Business Name</label>
+                      <input type="text" class="form-control my-2 border-none border-bottom rounded-0" name="busName" id="busName"
+                        placeholder="Enter Business Name" value="{{ request.form['busName'] }}" required>
+                    </div>
+                  </div>
+
+                  <div class="d-flex flex-row align-items-center mb-4">
+                    <i
+                      class="fa fa-list-alt fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
+                    <div data-mdb-input-init class="form-outline flex-fill mb-0 d-flex align-items-center gap-4">
+                      <label class="form-check-label" for="busCat">Category:</label>
+                      <select id="busCat" name="busCat" class="form-select my-2 border-none border-bottom rounded-0" required>
+                        {% for cat in categories %}
+                        <option value="{{ cat['BusCatID'] }}">{{ cat['Category'] }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="d-flex flex-row align-items-center mb-4">
+                    <i
+                      class="fa fa-city fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
+                    <div data-mdb-input-init class="form-outline flex-fill mb-0 d-flex align-items-center gap-4">
+                      <label class="form-check-label" for="busCity">City: </label>
+                      <select id="busCity" name="busCity" class="form-select my-2 border-none border-bottom rounded-0" required>
+                        {% for city in cities %}
+                        <option value="{{ city['City'] }}">{{ city['City'] }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="d-flex flex-row align-items-center mb-4">
+                    <i
+                      class="fa fa-road fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
+                    <div data-mdb-input-init class="form-outline flex-fill mb-0 d-flex align-items-center gap-4">
+                      <label for="busStreet">Street</label>
+                      <input type="text" class="form-control my-2 border-none border-bottom rounded-0" name="busStreet" id="busStreet" placeholder="street"
+                        value="{{ request.form['busStreet'] }}">
+                    </div>
+                  </div>
+
+                  <div class="d-flex flex-row align-items-center mb-4">
+                    <i
+                      class="fas fa-house fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
+                    <div data-mdb-input-init class="form-outline flex-fill mb-0 d-flex align-items-center gap-4">
+                      <label for="busHouseNum">House Number</label>
+                      <input type="number" class="form-control my-2 border-none border-bottom rounded-0" name="busHouseNum" id="busHouseNum"
+                        placeholder="House Number" value="{{ request.form['busHouseNum'] }}">
+                    </div>
+                  </div>
+                  <div class="d-flex justify-content-center mx-4 my-3 mb-lg-4">
+                    <button value="Submit" type="submit" class="btn btn-primary btn-lg w-75">Create</button>
+                  </div>
+                </form>
+              </div>
+              <div class="col-md-10 col-lg-6 d-flex align-items-center order-1 order-lg-2">
+                <img src="{{url_for('static', filename='images/bus.jpg')}}" class="img-fluid" alt="Sample image">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
 {% endblock %}

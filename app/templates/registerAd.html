@@ -88,7 +88,7 @@ Register Advertise
 
                 <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">Create a new Add</p>
 
-                <form action="{{ url_for('ad.register_ad') }}" method="post" class="mx-1 mx-md-4">
+                <form action="{{ url_for('ad.register_ad') }}" method="post" class="mx-1 mx-md-4 d-flex flex-column justify-content-between">
 
                   <div class="d-flex flex-row align-items-center mb-4">
                     <i class="fa fa-header fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
@@ -141,7 +141,6 @@ Register Advertise
                       <label class="form-check-label" for="adCat">Category: </label>
                       <select id="adCat" name="adCat" class="form-select my-2 border-none border-bottom rounded-0" required>
                         {% for cat in categories %}
-                        <!--        ha?????????????????????           -->
                         <option value="{{ cat['AdCatID'] }}">{{ cat['Category'] }}</option>
                         {% endfor %}
                       </select>
