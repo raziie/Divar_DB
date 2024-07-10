@@ -4,24 +4,30 @@ Home
 {% endblock %}
 
 {% block content %}
-<form class="d-flex" role="search" method="post" action="{{url_for('market.home') }}">
-  <input class="form-control me-2" value="{{ request.form['searchString'] }}" type="search" placeholder="Search"
-    name="searchString">
-  <button class="btn btn-outline-success" type="submit">Search</button>
-</form>
+<div class="container mt-5">
+  <div class="row d-flex align-items-center justify-content-center">
+    <div class="col-10 col-lg-5">
+      <form class="d-flex" role="search" method="post" action="{{url_for('market.home') }}">
+        <input class="form-control me-2" value="{{ request.form['searchString'] }}" type="search" placeholder="Search"
+          name="searchString">
+        <button class="btn btn-outline-secondary" type="submit">Search</button>
+      </form>
+    </div>
+  </div>
+</div>
 
 <div class="container">
-  <div class="row">
-    <h1 class="display-4 m-5">Newest Items</h1>
-    <div class="row row-cols-1 row-cols-md-3 g-5">
+  <div class="row text-center d-flex align-items-center justify-content-center">
+    <h1 class="border-bottom display-5 m-5 w-50">Newest Items</h1>
+    <div class="row row-cols-1 row-cols-md-3 row-cols-xl-4 g-5 mt-0">
       {% for item in items %}
       <div class="col">
         <a href="{{ url_for('ad.advertise_detail', adv_id=item['AdID']) }}">
-        <div class="card h-100">
-          <img src="{{ url_for('static', filename=item['ImagePath']) }}" class="card-img-top" alt="image" height="100px">
+        <div class="card border-none h-100 overflow-hidden">
+          <img class="img-fluid" src="{{ url_for('static', filename=item['ImagePath']) }}" class="card-img-top" alt="image" height="100px">
           <div class="card-body">
             <h5 class="card-title display-6">{{ item['Title'] }}</h5>
-            <p class="card-text">Price: {{ item['Price'] }}</p>
+            <p class="card-text">Price: <span class="me-2 text-danger">${{ item['Price'] }}</span></p>
             <!--     goes to item details page      -->
           </div>
           <div class="card-footer">
@@ -36,7 +42,7 @@ Home
 </div>
 
 
-<div class="container d-flex justify-content-center">
+<div class="container d-flex justify-content-center mt-5">
   <div class="row">
     <nav>
       <ul class="pagination">

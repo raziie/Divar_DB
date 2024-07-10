@@ -4,7 +4,7 @@ Register Advertise
 {% endblock %}
 {% block content %}
 
-<main class="form-signin w-100 m-auto">
+<!-- <main class="form-signin w-100 m-auto">
   <form action="{{ url_for('ad.register_ad') }}" method="post">
     <br>
 
@@ -42,7 +42,6 @@ Register Advertise
       <label for="adCat">Category: (default is chosen) </label>
       <select id="adCat" name="adCat" required>
         {% for cat in categories %}
-        <!--        ha?????????????????????           -->
         <option value="{{ cat['AdCatID'] }}">{{ cat['Category'] }}</option>
         {% endfor %}
       </select>
@@ -75,5 +74,134 @@ Register Advertise
     </div>
     <button type="submit" class="btn btn-primary m-2" value="Submit">Submit</button>
   </form>
-</main>
+</main> -->
+
+
+<section>
+  <div class="container">
+    <div class="row d-flex justify-content-center align-items-center">
+      <div class="col-lg-10 col-xl-9 mx-5 my-3 p-5">
+        <div class="card text-black" style="border-radius: 25px;">
+          <div class="card-body p-md-3 rounded-4" style="background-color: #dfe1e6">
+            <div class="row justify-content-center">
+              <div class="col-md-10 col-lg-6 order-2 order-lg-1">
+
+                <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">Create a new Add</p>
+
+                <form action="{{ url_for('ad.register_ad') }}" method="post" class="mx-1 mx-md-4">
+
+                  <div class="d-flex flex-row align-items-center mb-4">
+                    <i class="fa fa-header fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
+                    <div data-mdb-input-init class="form-outline flex-fill mb-0 d-flex align-items-center gap-4">
+                      <label class="form-label" for="adTitle">Title</label>
+                      <input type="text" class="form-control border-none border-bottom rounded-0" name="adTitle" id="adTitle" placeholder="Enter Title"
+                        value="{{ request.form['adTitle'] }}" required>
+                    </div>
+                  </div>
+
+                  <div class="d-flex flex-row align-items-center mb-4">
+                    <i class="fa fa-heading fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
+                    <div data-mdb-input-init class="form-outline flex-fill mb-0 d-flex align-items-center gap-4">
+                      <label class="form-label" for="adSubTitle">Subtitle</label>
+                      <input type="text" class="form-control border-none border-bottom rounded-0" name="adSubTitle" id="adSubTitle"
+                        placeholder="Enter SubTitle" value="{{ request.form['adSubTitle'] }}">
+                    </div>
+                  </div>
+
+                  <div class="d-flex flex-row align-items-center mb-4">
+                    <i class="fa fa-info-circle fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
+                    <div data-mdb-input-init class="form-outline flex-fill mb-0 d-flex align-items-center gap-4">
+                      <label class="form-label" for="adDesc">Descriptions</label>
+                      <input type="text" class="form-control border-none border-bottom rounded-0" id="adDesc" name="adDesc" placeholder="Enter Descriptions"
+                        value="{{ request.form['adDesc'] }}">
+                    </div>
+                  </div>
+
+                  <div class="d-flex flex-row align-items-center mb-4">
+                    <i class="fa fa-money fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
+                    <div data-mdb-input-init class="form-outline flex-fill mb-0 d-flex align-items-center gap-4">
+                      <label class="form-label" for="adPrice">Price</label>
+                      <input type="number" step="0.01" class="form-control border-none border-bottom rounded-0" name="adPrice" id="adPrice"
+                        placeholder="Price" value="{{ request.form['adPrice'] }}" required>
+                    </div>
+                  </div>
+
+                  <div class="d-flex flex-row align-items-center mb-4">
+                    <i class="fa fa-picture-o fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
+                    <div data-mdb-input-init class="form-outline flex-fill mb-0 d-flex align-items-center gap-4">
+                      <label class="form-label" for="adImage">Image</label>
+                      <input type="file" class="form-control border-none border-bottom rounded-0" name="adImage" id="adImage" placeholder="Image"
+                        value="{{ request.form['inLName'] }}">
+                    </div>
+                  </div>
+
+                  <div class="d-flex flex-row align-items-center mb-4">
+                    <i class="fa fa-list-alt fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
+                    <div data-mdb-input-init class="form-outline flex-fill mb-0 d-flex align-items-center gap-4">
+                      <label class="form-check-label" for="adCat">Category: </label>
+                      <select id="adCat" name="adCat" class="form-select my-2 border-none border-bottom rounded-0" required>
+                        {% for cat in categories %}
+                        <!--        ha?????????????????????           -->
+                        <option value="{{ cat['AdCatID'] }}">{{ cat['Category'] }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="form-check d-flex flex-row align-items-center ps-0 mb-4">
+                    <i class="fa fa-city fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
+                    <div data-mdb-input-init class="form-outline flex-fill mb-0 d-flex align-items-center gap-4">
+                      <label class="form-check-label" for="adCity">City: </label>
+                      <select id="adCity" name="adCity" class="form-select my-2 border-none border-bottom rounded-0" required>
+                        {% for city in cities %}
+                        <option value="{{ city['City'] }}">{{ city['City'] }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="d-flex flex-row align-items-center mb-4">
+                    <i class="fa fa-road fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
+                    <div data-mdb-input-init class="form-outline flex-fill mb-0 d-flex align-items-center gap-4">
+                      <label class="form-label" for="adStreet">Street</label>
+                      <input type="text" class="form-control border-none border-bottom rounded-0" name="adStreet" id="adStreet" placeholder="street"
+                        value="{{ request.form['inStreet'] }}">
+                    </div>
+                  </div>
+
+                  <div class="d-flex flex-row align-items-center mb-4">
+                    <i class="fas fa-house fa-lg me-3 fa-fw border-3 p-3 d-flex align-items-center justify-content-center"></i>
+                    <div data-mdb-input-init class="form-outline flex-fill mb-0 d-flex align-items-center gap-4">
+                      <label class="form-label" for="adHouseNum">Number</label>
+                      <input type="number" class="form-control border-none border-bottom rounded-0" name="adHouseNum" id="adHouseNum"
+                        placeholder="House Number" value="{{ request.form['inHouseNum'] }}">
+                    </div>
+                  </div>
+
+                  <!-- <div class="d-flex flex-row align-items-center mb-2">
+                    <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+                    <div data-mdb-input-init class="form-outline flex-fill mb-0 d-flex align-items-center gap-4">
+                      <div class="form-group form-check">
+                        <input type="checkbox" class="form-check-input" id="exampleCheck1" required>
+                        <label class="form-check-label" for="exampleCheck1">Check me out</label>
+                      </div>
+                    </div>
+                  </div> -->
+
+                  <div class="d-flex justify-content-center mx-4 my-3 mb-lg-4">
+                    <button value="Submit" type="submit" class="btn btn-primary btn-lg">Submit</button>
+                  </div>
+                </form>
+              </div>
+              <div class="col-md-10 col-lg-6 d-flex align-items-center order-1 order-lg-2">
+                <img src="{{url_for('static', filename='images/ad.jpg')}}"
+                  class="img-fluid" alt="Sample image">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 {% endblock %}
