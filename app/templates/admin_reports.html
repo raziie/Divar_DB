@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}
+Home
+{% endblock %}
+
+{% block content %}
+<form class="d-flex" role="search" method="post" action="{{url_for('admin.get_reports',adv_id=AdID) }}">
+  <input class="form-control me-2" value="{{ request.form['searchString'] }}" type="search" placeholder="Search"
+    name="searchString">
+  <button class="btn btn-outline-success" type="submit">Search</button>
+</form>
+
+<div class="container">
+  <div class="row">
+    <h1 class="display-4 m-5">Reports</h1>
+<!--    <div class="row row-cols-1 row-cols-md-3 g-5">-->
+      {% for item in items %}
+      <div class="col">
+        <div class="card h-100">
+<!--          <img src="{{ url_for('static', filename=item['ImagePath']) }}" class="card-img-top" alt="image" height="100px">-->
+          <div class="card-body">
+            <h5 class="card-title display-6">{{ item['RepCatID'] }}</h5>
+            <p class="card-text">Content: {{ item['Content'] }}</p>
+            <!--     goes to item details page      -->
+          </div>
+          <div class="card-footer">
+            <small class="text-body-secondary">Last updated {{item['DaysPast']}} days ago</small>
+          </div>
+        </div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+
+
+
+{% endblock %}

@@ -148,7 +148,7 @@ def admin_validate_otp():
             session['logged_in'] = True
             session['user'] = user_id
             session['admin'] = True
-            return redirect(url_for('admin.home'))
+            return redirect(url_for('admin.admin_home'))
 
 
 @auth.route("/signup/", methods=['GET', 'POST'])
