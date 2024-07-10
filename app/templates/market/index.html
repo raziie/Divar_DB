@@ -2,14 +2,19 @@
 {% block title %}
 welcome
 {% endblock %}
-
 {% block content %}
 
 <section class="py-5 text-center container">
-  <button class="btn btn-secondary rounded-pill px-3 mx-1" type="button">
-    <a href="{{ url_for('auth.sign_up') }}">Sign Up</a>
-  </button>
-  <button class="btn btn-light rounded-pill px-3 mx-1" type="button">
-    <a href="{{ url_for('auth.user_request_otp') }}"> Log in</a></button>
+  <div class="row d-flex justify-content-center">
+    <div class="col-10 col-lg-5 d-flex flex-column align_items-center justify-content-center bg-dark text-light p-5 rounded-3 mx-5">
+      <p class="mb-5">Please Sign Up or Log in to Continue</p>
+      <button class="btn btn-secondary rounded-pill px-3 mx-1 mb-3" type="button">
+        <a href="{{ url_for('auth.sign_up') }}">Sign Up</a>
+      </button>
+      <button class="btn btn-light rounded-pill px-3 mx-1" type="button">
+        <a href="{{ url_for('auth.user_request_otp') }}">Log in</a>
+      </button>
+    </div>
+  </div>
 </section>
 {% endblock %}

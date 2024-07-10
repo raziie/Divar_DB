@@ -4,35 +4,34 @@ Sign Up
 {% endblock %}
 {% block content %}
 
-<div class="container">
-
+<!-- <div class="container">
   <main class="form-signin w-100 m-auto d-flex align-items-center justify-content-center">
     <form action="{{ url_for('auth.sign_up') }}" method="post"
-      class="bg-success my-5 p-3 text-white bg-opacity-50 rounded col-sm-8 col-lg-5">
+      class="bg-dark text-light my-5 p-3 rounded col-sm-8 col-lg-5">
       <div class="form-group">
-        <label for="inEmail">ایمیل</label>
-        <input type="email" class="form-control my-2" name="inEmail" id="inEmail" placeholder="ایمیل..."
+        <label for="inEmail">Email</label>
+        <input type="email" class="form-control my-2" name="inEmail" id="inEmail" placeholder="Enter your Email"
           value="{{ request.form['inEmail'] }}">
       </div>
       <div class="form-group">
-        <label for="inPhone">شماره تلفن</label>
+        <label for="inPhone">Phone</label>
         <input type="tel" class="form-control my-2" id="inPhone" name="inPhone" pattern="[0-9]{11}"
-          placeholder="تلفن..." value="{{ request.form['inPhone'] }}">
+          placeholder="Enter your Phone" value="{{ request.form['inPhone'] }}">
       </div>
 
       <div class="form-group">
-        <label for="inFName">نام</label>
-        <input type="text" class="form-control my-2" name="inFName" id="inFName" placeholder="نام..."
+        <label for="inFName">Name</label>
+        <input type="text" class="form-control my-2" name="inFName" id="inFName" placeholder="Enter your Name"
           value="{{ request.form['inFName'] }}" required>
       </div>
       <div class="form-group">
-        <label for="inLName">نام خانوادگی</label>
-        <input type="text" class="form-control my-2" name="inLName" id="inLName" placeholder="نام خانوادگی..."
+        <label for="inLName">Last Name</label>
+        <input type="text" class="form-control my-2" name="inLName" id="inLName" placeholder="Enter your Last Name"
           value="{{ request.form['inLName'] }}" required>
       </div>
 
       <div class="form-group">
-        <label for="uCity">شهر </label>
+        <label for="uCity">City </label>
         <select id="uCity" name="uCity" class="form-select my-2" required>
           {% for city in cities %}
           <option value="{{ city['City'] }}">{{ city['City'] }}</option>
@@ -41,24 +40,120 @@ Sign Up
       </div>
 
       <div class="form-group">
-        <label for="inStreet">خیابان</label>
-        <input type="text" class="form-control my-2" name="inStreet" id="inStreet" placeholder="خیابان..."
+        <label for="inStreet">Street</label>
+        <input type="text" class="form-control my-2" name="inStreet" id="inStreet" placeholder="Enter your Street name"
           value="{{ request.form['inStreet'] }}">
       </div>
+
       <div class="form-group">
-        <label for="inHouseNum">شماره پلاک</label>
-        <input type="number" class="form-control my-2" name="inHouseNum" id="inHouseNum" placeholder="پلاک..."
-          value="{{ request.form['inHouseNum'] }}">
+        <label for="inHouseNum">House Number</label>
+        <input type="number" class="form-control my-2" name="inHouseNum" id="inHouseNum"
+          placeholder="Enter your House number" value="{{ request.form['inHouseNum'] }}">
       </div>
 
-      <!--      <div class="form-group form-check">-->
-      <!--        <input type="checkbox" class="form-check-input" id="exampleCheck1" required>-->
-      <!--        <label class="form-check-label" for="exampleCheck1">Check me out</label>-->
-      <!--      </div>-->
       <div class="d-grid gap-2">
-        <button type="submit" class="btn btn-success m-2" value="Submit">ثبت نام</button>
+        <button type="submit" class="btn btn-success m-2" value="Submit">Sign Up</button>
       </div>
     </form>
   </main>
-</div>
+</div> -->
+
+
+<section style="background-color: #eee;">
+  <div class="container">
+    <div class="row d-flex justify-content-center align-items-center">
+      <div class="col-lg-10 col-xl-9 mx-5 my-3 p-5">
+        <div class="card text-black" style="border-radius: 25px;">
+          <div class="card-body p-md-3">
+            <div class="row justify-content-center">
+              <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
+
+                <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">Sign up</p>
+
+                <form action="{{ url_for('auth.sign_up') }}" method="post" class="mx-1 mx-md-4">
+
+                  <div class="d-flex flex-row align-items-center mb-2">
+                    <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
+                    <div data-mdb-input-init class="form-outline flex-fill mb-0">
+                      <label class="form-label" for="inEmail">Email</label>
+                      <input type="email" class="form-control" name="inEmail" id="inEmail"
+                        placeholder="Enter your Email" value="{{ request.form['inEmail'] }}" />
+                    </div>
+                  </div>
+
+                  <div class="d-flex flex-row align-items-center mb-2">
+                    <i class="fas fa-phone fa-lg me-3 fa-fw"></i>
+                    <div data-mdb-input-init class="form-outline flex-fill mb-0">
+                      <label class="form-label" for="inPhone">Phone</label>
+                      <input type="tel" class="form-control" id="inPhone" name="inPhone" pattern="[0-9]{11}"
+                        placeholder="Enter your Phone" value="{{ request.form['inPhone'] }}" />
+                    </div>
+                  </div>
+
+                  <div class="d-flex flex-row align-items-center mb-2">
+                    <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+                    <div data-mdb-input-init class="form-outline flex-fill mb-0">
+                      <label class="form-label" for="inFName">Name</label>
+                      <input type="text" class="form-control" name="inFName" id="inFName" placeholder="Enter your Name"
+                        value="{{ request.form['inFName'] }}" required />
+                    </div>
+                  </div>
+
+                  <div class="d-flex flex-row align-items-center mb-2">
+                    <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+                    <div data-mdb-input-init class="form-outline flex-fill mb-0">
+                      <label class="form-label" for="inLName">Last Name</label>
+                      <input type="text" class="form-control my-2" name="inLName" id="inLName"
+                        placeholder="Enter your Last Name" value="{{ request.form['inLName'] }}" required>
+                    </div>
+                  </div>
+
+                  <div class="d-flex flex-row align-items-center mb-2">
+                    <i class="fas fa-road fa-lg me-3 fa-fw"></i>
+                    <div data-mdb-input-init class="form-outline flex-fill mb-0">
+                      <label class="form-label" for="inStreet">Street</label>
+                      <input type="text" class="form-control my-2" name="inStreet" id="inStreet"
+                        placeholder="Enter your Street name" value="{{ request.form['inStreet'] }}">
+                    </div>
+                  </div>
+
+                  <div class="d-flex flex-row align-items-center mb-2">
+                    <i class="fas fa-house fa-lg me-3 fa-fw"></i>
+                    <div data-mdb-input-init class="form-outline flex-fill mb-0">
+                      <label class="form-label" for="inHouseNum">House Number</label>
+                      <input type="number" class="form-control my-2" name="inHouseNum" id="inHouseNum"
+                        placeholder="Enter your House number" value="{{ request.form['inHouseNum'] }}">
+                    </div>
+                  </div>
+
+                  <div class="form-check d-flex flex-row align-items-center pe-0 mb-4">
+                    <i class="fas fa-city fa-lg me-3 fa-fw"></i>
+                    <div data-mdb-input-init class="form-outline flex-fill mb-0">
+                    <label class="form-check-label" for="uCity">City </label>
+                    <select id="uCity" name="uCity" class="form-select my-2" required>
+                      {% for city in cities %}
+                      <option value="{{ city['City'] }}">{{ city['City'] }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  </div>
+
+                  <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
+                    <button value="Submit" type="submit" class="btn btn-primary btn-lg">Sign Up</button>
+                  </div>
+                </form>
+              </div>
+              <div class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
+
+                <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-registration/draw1.webp"
+                  class="img-fluid" alt="Sample image">
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 {% endblock %}
