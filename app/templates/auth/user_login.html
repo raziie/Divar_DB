@@ -4,35 +4,6 @@ Login
 {% endblock %}
 {% block content %}
 
-<!-- <div class="container">
-  <main class="form-signin w-100 m-auto d-flex align-items-center justify-content-center">
-    <form action="{{ url_for('auth.user_request_otp') }}" method="post"
-      class="bg-success my-5 p-3 text-white bg-opacity-50 rounded col-sm-8 col-lg-5">
-      <div class="form-group">
-        <label for="inEmail">Email</label>
-        <input type="email" class="form-control my-2" name="inEmail" id="inEmail" placeholder="Enter your Email"
-          value="{{ request.form['inEmail'] }}">
-      </div>
-      <div class="form-group">
-        <label for="inPhone">Phone</label>
-        <input type="tel" class="form-control my-2" id="inPhone" name="inPhone" pattern="[0-9]{11}"
-          placeholder="Enter your Phone" value="{{ request.form['inPhone'] }}">
-      </div>
-
-      <div class="d-grid gap-2">
-        <button type="submit" formaction="{{ url_for('auth.user_request_otp') }}"
-                class="btn btn-success m-2" value="Submit">Login</button>
-      </div>
-
-      <div class="d-grid gap-2">
-        <button type="submit" formaction="{{ url_for('auth.admin_request_otp') }}"
-                class="btn btn-success m-2" value="Submit">Login as Admin</button>
-      </div>
-
-    </form>
-  </main>
-</div> -->
-
 <section>
   <div class="container">
     <div class="row d-flex justify-content-center align-items-center">

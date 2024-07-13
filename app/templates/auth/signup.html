@@ -4,61 +4,6 @@ Sign Up
 {% endblock %}
 {% block content %}
 
-<!-- <div class="container">
-  <main class="form-signin w-100 m-auto d-flex align-items-center justify-content-center">
-    <form action="{{ url_for('auth.sign_up') }}" method="post"
-      class="bg-dark text-light my-5 p-3 rounded col-sm-8 col-lg-5">
-      <div class="form-group">
-        <label for="inEmail">Email</label>
-        <input type="email" class="form-control my-2" name="inEmail" id="inEmail" placeholder="Enter your Email"
-          value="{{ request.form['inEmail'] }}">
-      </div>
-      <div class="form-group">
-        <label for="inPhone">Phone</label>
-        <input type="tel" class="form-control my-2" id="inPhone" name="inPhone" pattern="[0-9]{11}"
-          placeholder="Enter your Phone" value="{{ request.form['inPhone'] }}">
-      </div>
-
-      <div class="form-group">
-        <label for="inFName">Name</label>
-        <input type="text" class="form-control my-2" name="inFName" id="inFName" placeholder="Enter your Name"
-          value="{{ request.form['inFName'] }}" required>
-      </div>
-      <div class="form-group">
-        <label for="inLName">Last Name</label>
-        <input type="text" class="form-control my-2" name="inLName" id="inLName" placeholder="Enter your Last Name"
-          value="{{ request.form['inLName'] }}" required>
-      </div>
-
-      <div class="form-group">
-        <label for="uCity">City </label>
-        <select id="uCity" name="uCity" class="form-select my-2" required>
-          {% for city in cities %}
-          <option value="{{ city['City'] }}">{{ city['City'] }}</option>
-          {% endfor %}
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label for="inStreet">Street</label>
-        <input type="text" class="form-control my-2" name="inStreet" id="inStreet" placeholder="Enter your Street name"
-          value="{{ request.form['inStreet'] }}">
-      </div>
-
-      <div class="form-group">
-        <label for="inHouseNum">House Number</label>
-        <input type="number" class="form-control my-2" name="inHouseNum" id="inHouseNum"
-          placeholder="Enter your House number" value="{{ request.form['inHouseNum'] }}">
-      </div>
-
-      <div class="d-grid gap-2">
-        <button type="submit" class="btn btn-success m-2" value="Submit">Sign Up</button>
-      </div>
-    </form>
-  </main>
-</div> -->
-
-
 <section>
   <div class="container">
     <div class="row d-flex justify-content-center align-items-center">
