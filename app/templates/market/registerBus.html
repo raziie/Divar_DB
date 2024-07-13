@@ -4,54 +4,6 @@ Register Business
 {% endblock %}
 {% block content %}
 
-<!-- <main class="form-signin w-100 m-auto">
-  <form action="{{ url_for('market.register_bus') }}" method="post">
-    <br>
-
-    <div class="form-group">
-      <label for="busName">Business Name</label>
-      <input type="text" class="form-control" name="busName" id="busName" placeholder="Enter Business Name"
-        value="{{ request.form['busName'] }}" required>
-    </div>
-
-    <div class="form-group">
-      <label for="busCat">Category: (default is chosen) </label>
-      <select id="busCat" name="busCat" required>
-        {% for cat in categories %}
-        <option value="{{ cat['BusCatID'] }}">{{ cat['Category'] }}</option>
-        {% endfor %}
-      </select>
-    </div>
-
-    <div class="form-group">
-      <label for="busCity">City: (default is chosen) </label>
-      <select id="busCity" name="busCity" required>
-        {% for city in cities %}
-        <option value="{{ city['City'] }}">{{ city['City'] }}</option>
-        {% endfor %}
-      </select>
-    </div>
-
-    <div class="form-group">
-      <label for="busStreet">Street</label>
-      <input type="text" class="form-control" name="busStreet" id="busStreet" placeholder="street"
-        value="{{ request.form['busStreet'] }}">
-    </div>
-
-    <div class="form-group">
-      <label for="busHouseNum">House Number</label>
-      <input type="number" class="form-control" name="busHouseNum" id="busHouseNum" placeholder="House Number"
-        value="{{ request.form['busHouseNum'] }}">
-    </div>
-
-    <div class="form-group form-check">
-      <input type="checkbox" class="form-check-input" id="exampleCheck1" required>
-      <label class="form-check-label" for="exampleCheck1">Check me out</label>
-    </div>
-    <button type="submit" class="btn btn-primary m-2" value="Submit">Submit</button>
-  </form>
-</main> -->
-
 <section>
   <div class="container">
     <div class="row d-flex justify-content-center align-items-center">

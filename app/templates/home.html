@@ -23,17 +23,18 @@ Home
       {% for item in items %}
       <div class="col">
         <a href="{{ url_for('ad.advertise_detail', adv_id=item['AdID']) }}">
-        <div class="card border-none h-100 overflow-hidden">
-          <img class="img-fluid" src="{{ url_for('static', filename=item['ImagePath']) }}" class="card-img-top" alt="image" height="100px">
-          <div class="card-body">
-            <h5 class="card-title display-6">{{ item['Title'] }}</h5>
-            <p class="card-text">Price: <span class="me-2 text-danger">${{ item['Price'] }}</span></p>
-            <!--     goes to item details page      -->
+          <div class="card border-none h-100 overflow-hidden">
+            <img class="img-fluid" src="{{ url_for('static', filename=item['ImagePath']) }}" class="card-img-top"
+              alt="image" height="100px">
+            <div class="card-body">
+              <h5 class="card-title display-6">{{ item['Title'] }}</h5>
+              <p class="card-text">Price: <span class="me-2 text-danger">${{ item['Price'] }}</span></p>
+              <!--     goes to item details page      -->
+            </div>
+            <div class="card-footer">
+              <small class="text-body-secondary">Last updated {{item['DaysPast']}} days ago</small>
+            </div>
           </div>
-          <div class="card-footer">
-            <small class="text-body-secondary">Last updated {{item['DaysPast']}} days ago</small>
-          </div>
-        </div>
         </a>
       </div>
       {% endfor %}
@@ -59,11 +60,13 @@ Home
             <span aria-hidden="true">&laquo;</span>
           </a>
         </li>
-        <li class="page-item disabled"><a class="page-link" href="{{ url_for('market.home', page=page-1) }}">{{page-1}}</a>
+        <li class="page-item disabled"><a class="page-link"
+            href="{{ url_for('market.home', page=page-1) }}">{{page-1}}</a>
         </li>
         {% endif %}
 
-        <li class="page-item active"><a class="page-link" href="{{ url_for('market.home', page=page) }}">{{page}}</a></li>
+        <li class="page-item active"><a class="page-link" href="{{ url_for('market.home', page=page) }}">{{page}}</a>
+        </li>
 
         {% if page < total_pages %} <li class="page-item"><a class="page-link"
             href="{{ url_for('market.home', page=page+1) }}">{{page+1}}</a></li>
@@ -73,7 +76,8 @@ Home
             </a>
           </li>
           {% else %}
-          <li class="page-item disabled"><a class="page-link" href="{{ url_for('market.home', page=page+1) }}">{{page+1}}</a>
+          <li class="page-item disabled"><a class="page-link"
+              href="{{ url_for('market.home', page=page+1) }}">{{page+1}}</a>
           </li>
           <li class="page-item disabled">
             <a class="page-link" href="{{ url_for('market.home', page=page+1) }}" aria-label="Next">

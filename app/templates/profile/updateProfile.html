@@ -4,60 +4,6 @@ Update Profile
 {% endblock %}
 {% block content %}
 
-<!-- <main class="form-signin w-100 m-auto">
-  <form action="{{ url_for('profile.update_profile') }}" method="post">
-    <br>
-    <div class="form-group">
-      <label for="inFName">First Name</label>
-      <input type="text" class="form-control" name="inFName" id="inFName" placeholder="{{ curr['FirstName'] }}"
-      value="{{ request.form['inFName'] }}">
-    </div>
-    <div class="form-group">
-      <label for="inLName">Last Name</label>
-      <input type="text" class="form-control" name="inLName" id="inLName" placeholder="{{ curr['LastName'] }}"
-      value="{{ request.form['inLName'] }}">
-    </div>
-
-    <div class="form-group">
-      <label for="inEmail">Email address</label>
-      <input type="email" class="form-control"  name="inEmail" id="inEmail"  placeholder="{{ curr['Email'] }}"
-      value="{{ request.form['inEmail'] }}">
-    </div>
-    <div class="form-group">
-      <label for="inPhone">Phone</label>
-      <input type="tel" class="form-control" id="inPhone" name="inPhone" pattern="[0-9]{11}" placeholder="{{ curr['Phone'] }}"
-      value="{{ request.form['inPhone'] }}">
-    </div>
-
-    <div class="form-group">
-    <label for="uCity">City: (Now is {{ curr['City'] }}) </label>
-    <select id="uCity" name="uCity" >
-      {% for city in cities %}
-      <option value="{{ city[0] }}">{{ city[0] }}</option>
-      {% endfor %}
-    </select>
-    </div>
-
-    <div class="form-group">
-      <label for="inStreet">Street</label>
-      <input type="text" class="form-control" name="inStreet" id="inStreet" placeholder="{{ curr['Street'] }}"
-      value="{{ request.form['inStreet'] }}">
-    </div>
-
-    <div class="form-group">
-      <label for="inHouseNum">House Number</label>
-      <input type="number" class="form-control" name="inHouseNum" id="inHouseNum" placeholder="{{ curr['House_num'] }}"
-      value="{{ request.form['inHouseNum'] }}">
-    </div>
-
-    <div class="form-group form-check">
-      <input type="checkbox" class="form-check-input" id="exampleCheck1" required>
-      <label class="form-check-label" for="exampleCheck1">Check me out</label>
-    </div>
-    <button type="submit" class="btn btn-primary m-2" value="Submit">Submit</button>
-  </form>
-</main> -->
-
 <section>
   <div class="container">
     <div class="row d-flex justify-content-center align-items-center">

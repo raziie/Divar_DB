@@ -4,44 +4,6 @@ Login
 {% endblock %}
 {% block content %}
 
-<!-- <div class="container">
-  <main class="form-signin w-100 m-auto d-flex align-items-center justify-content-center">
-    <form action="{{ url_for('auth.user_validate_otp') }}" method="post"
-      class="bg-success my-5 p-3 text-white bg-opacity-50 rounded col-sm-8 col-lg-5">
-      <div class="form-group">
-        <label for="inEmail">ایمیل</label>
-        <input type="email" class="form-control my-2" name="inEmail" id="inEmail" placeholder="user['email']"
-          value="{{ user['email'] }}">
-      </div>
-      <div class="form-group">
-        <label for="inPhone">شماره تلفن</label>
-        <input type="tel" class="form-control my-2" id="inPhone" name="inPhone" pattern="[0-9]{11}"
-          placeholder="تلفن..." value="{{ user['phone'] }}">
-      </div>
-
-      <input type="hidden"  name="user_id" value="{{ user['user_id'] }}">
-
-      {% if user %}
-      <div class="form-group">
-        <label for="inPhone">رمز یکبار مصرف</label>
-        <input type="tel" class="form-control my-2" id="inOTP" name="inOTP"
-          value="{{ request.form['inOTP'] }}">
-      </div>
-
-      {% endif %}
-      <div class="d-grid gap-2">
-        <button type="submit" formaction="{{ url_for('auth.user_validate_otp') }}"
-                class="btn btn-success m-2" value="Submit">ورود</button>
-      </div>
-
-      <div class="d-grid gap-2">
-        <button type="submit" formaction="{{ url_for('auth.admin_validate_otp') }}"
-                class="btn btn-success m-2" value="Submit">ورود به عنوان ادمین</button>
-      </div>
-    </form>
-  </main>
-</div> -->
-
 <section>
   <div class="container">
     <div class="row d-flex justify-content-center align-items-center">
@@ -72,7 +34,7 @@ Login
                         placeholder="Enter your Phone" value="{{ user['phone'] }}">
                     </div>
                   </div>
-
+                  
                   <input type="hidden" name="user_id" value="{{ user['user_id'] }}">
 
                   {% if user %}
@@ -80,7 +42,7 @@ Login
                     <div data-mdb-input-init class="form-outline flex-fill mb-0">
                       <i class="fa fa-key fa-lg me-3 fa-fw"></i>
                       <label class="form-label" for="inPhone">One Time Password</label>
-                      <input type="tel" class="form-control my-2" id="inOTP" name="inPhone"
+                      <input type="tel" class="form-control my-2" id="inOTP" name="inOTP"
                         placeholder="Enter The received Message" value="{{ request.form['inOTP'] }}">
                     </div>
                   </div>
