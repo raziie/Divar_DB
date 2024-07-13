@@ -137,11 +137,11 @@ def advertise_status():
         ads = execute_read_query("SELECT * FROM divar.AdStatus JOIN divar.Advertise on "
                                  "AdStatus.AdID = Advertise.AdID WHERE Advertise.CreatorID = {}"
                                  .format(session['user']), True)
-
         print(ads)
         if ads is None:
-            return 'No Advertise Found', 404
-
+            # return 'No Advertise Found', 404
+            flash('No Advertise Found')
+            return redirect(url_for('market.home'))
         # dict_ads = []
         for i in range(len(ads)):
             advertise = ads[i]
@@ -149,20 +149,30 @@ def advertise_status():
             # print(advertise["AdID"])
             visit_number = execute_read_query("SELECT COUNT(UserID) FROM divar.Visit WHERE Visit.AdID = {}"
                                               .format(advertise["AdID"]), False)
-            print("visit", visit_number)
-            print(visit_number["COUNT(UserID)"])
+            # print("visit", visit_number)
+            # print(visit_number["COUNT(UserID)"])
             ads[i]['visits'] = visit_number["COUNT(UserID)"]
+
+            status = execute_read_query("SELECT stat FROM divar.Stat WHERE Stat.statID = {}"
+                                              .format(advertise['statID']), False)
+            ads[i]['status'] = status['stat'].lower()
+
+            delta = datetime.datetime.now() - ads[i]['CreatedAt']
+            ads[i]['DaysPast'] = delta.days
             # method convert a list to a dictionary to better handle in html (you can see usage in user update route)
             # advertise = convert_to_dict(advertise, ('AdID', 'Title', 'Price', 'Descriptions', 'Subtitle',
             #                                         'City', 'Street', 'HouseNum', 'CreatedAt', 'StatusComment',
             #                                         'statID'), [])
             # dict_ads.append(advertise)
 
+
         # TODO: pass dict_ads to front to have complete data and also
         # TODO: (front) complete page so that each advertise be more specific and big
         # print("here",ads)
 
-        return jsonify(ads), 200
-        # return render_template('status.html', items=ads)
+        # return jsonify(ads), 200
+        return render_template('status.html', items=ads)
     else:
-        return 'please sign up first', 401
+        # return 'please sign up first', 401
+        flash('Please sign up or login first')
+        return redirect(url_for('market.index'))

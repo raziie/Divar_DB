@@ -77,12 +77,35 @@ def get_reports(adv_id):
         reports = execute_read_query("SELECT AdReport.ReportNum, AdReport.UserID, AdReport.Content, RepCat.Category "
                                      "FROM divar.AdReport JOIN divar.RepCat ON RepCat.RepCatID = AdReport.RepCatID "
                                      "WHERE AdReport.AdID = {}".format(adv_id), True)
+        print(reports)
+        creator_id = execute_read_query("SELECT Advertise.CreatorID "
+                                        "FROM divar.Advertise "
+                                        "WHERE Advertise.AdID = {}".format(adv_id), False)
+        print(creator_id)
+        creator_name = execute_read_query("SELECT NormalUser.FirstName, NormalUser.LastName "
+                                           "FROM divar.NormalUser "
+                                           "WHERE NormalUser.UserID = {}".format(creator_id['CreatorID']), False)
+        # print(creator_name)
+        for i in range(len(reports)):
+            rep = reports[i]
+            # print("ad",advertise)
+            # print(advertise["AdID"])
+            user_name = execute_read_query("SELECT NormalUser.FirstName, NormalUser.LastName "
+                                           "FROM divar.AdReport JOIN divar.NormalUser ON AdReport.UserID = NormalUser.UserID "
+                                           "WHERE AdReport.ReportNum = {}".format(rep["ReportNum"]), True)
+            # print("user name", user_name[0])
+            # print(type(user_name[0]))
+            reports[i]['user_firstname'] = user_name[0]['FirstName']
+            reports[i]['user_lastname'] = user_name[0]['LastName']
+        # print(reports)
+        # print(user_name)
+        print(creator_name)
         if len(reports) == 0:
             # return 'No report to show', 404
             flash('No report to show')
             return redirect(url_for('admin.admin_home'))
         # return jsonify(reports), 200
-        return render_template("admin_reports.html", items=reports, AdID=adv_id)
+        return render_template("admin_reports.html", items=reports, AdID=adv_id, creator=creator_name)
     elif 'logged_in' in session and not session['admin']:
         # return 'You are not allowed', 403
         flash('You are not allowed')
