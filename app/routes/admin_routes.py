@@ -69,7 +69,6 @@ def admin_ad(adv_id):
         return redirect(url_for('market.index'))
 
 
-#TODO: ADD HTML AND CHANGE TO TEMPLATE RENDER
 @admin.route('/get_reports/<int:adv_id>', methods=['GET'])
 def get_reports(adv_id):
     if 'logged_in' in session and session['admin']:
@@ -78,13 +77,21 @@ def get_reports(adv_id):
                                      "FROM divar.AdReport JOIN divar.RepCat ON RepCat.RepCatID = AdReport.RepCatID "
                                      "WHERE AdReport.AdID = {}".format(adv_id), True)
         print(reports)
-        creator_id = execute_read_query("SELECT Advertise.CreatorID "
+        creator_id = execute_read_query("SELECT Advertise.CreatorID, Advertise.UserMade "
                                         "FROM divar.Advertise "
                                         "WHERE Advertise.AdID = {}".format(adv_id), False)
         print(creator_id)
-        creator_name = execute_read_query("SELECT NormalUser.FirstName, NormalUser.LastName "
-                                           "FROM divar.NormalUser "
-                                           "WHERE NormalUser.UserID = {}".format(creator_id['CreatorID']), False)
+        if creator_id['UserMade']:
+            creator_name = execute_read_query("SELECT NormalUser.FirstName, NormalUser.LastName "
+                                               "FROM divar.NormalUser "
+                                               "WHERE NormalUser.UserID = {}".format(creator_id['CreatorID']), False)
+            creator_name = creator_name['FirstName']+" "+creator_name['LastName']
+        else:
+            creator_name = execute_read_query("SELECT Business.BusName "
+                                              "FROM divar.Business "
+                                              "WHERE Business.UserID = {}".format(creator_id['CreatorID']), False)
+            print(creator_name)
+            creator_name = creator_name['BusName']
         # print(creator_name)
         for i in range(len(reports)):
             rep = reports[i]
@@ -97,13 +104,15 @@ def get_reports(adv_id):
             # print(type(user_name[0]))
             reports[i]['user_firstname'] = user_name[0]['FirstName']
             reports[i]['user_lastname'] = user_name[0]['LastName']
+            if not reports[i]['Content'] :
+                reports[i]['Content'] = " "
         # print(reports)
         # print(user_name)
         print(creator_name)
-        if len(reports) == 0:
-            # return 'No report to show', 404
-            flash('No report to show')
-            return redirect(url_for('admin.admin_home'))
+        # if len(reports) == 0:
+        #     # return 'No report to show', 404
+        #     flash('No report to show')
+        #     return redirect(url_for('admin.admin_home'))
         # return jsonify(reports), 200
         return render_template("admin_reports.html", items=reports, AdID=adv_id, creator=creator_name)
     elif 'logged_in' in session and not session['admin']:
@@ -135,7 +144,7 @@ def delete_advertise(adv_id):
         # print("avali",modify_status_insertion=='Done')
         # print("dovomi",status_insertion == 'Done')
         # print("here",( modify_status_insertion=='Done' and status_insertion == 'Done'))
-        if modify_status_insertion=='Done' and status_insertion == 'Done':
+        if modify_status_insertion == 'Done' and status_insertion == 'Done':
             # return 'Deleted',204
             print("deleted the ad", adv_id)
             flash('Deleted the Advertise')
@@ -156,13 +165,28 @@ def delete_advertise(adv_id):
 @admin.route('/deactivate_user/<int:adv_id>', methods=['GET'])
 def deactive_user(adv_id):
     if 'logged_in' in session and session['admin']:
-        user_id =execute_read_query("SELECT Advertise.CreatorID FROM divar.Advertise WHERE Advertise.AdID={}".format(adv_id),False)
-        # print("usereeeeee",user_id)
-        report = execute_update_query("UPDATE NormalUser SET IsActive = {} WHERE UserID= {}".format(False, user_id["CreatorID"]))
+        report_other_ads = 'Done'
+        creator =execute_read_query("SELECT Advertise.CreatorID, Advertise.UserMade FROM divar.Advertise WHERE Advertise.AdID={}".format(adv_id), False)
+        # print(creator)
+        if creator['UserMade']:
+            report = execute_update_query("UPDATE NormalUser SET IsActive = {} WHERE UserID= {}".format(False, creator["CreatorID"]))
+            ads =  execute_read_query("SELECT Advertise.AdID FROM Advertise WHERE Advertise.CreatorID={}".format(creator["CreatorID"]), True)
+            for i in range(len(ads)):
+                report_other_ads = execute_update_query(
+                    "UPDATE divar.Advertise JOIN divar.AdStatus ON AdStatus.AdID = Advertise.AdID SET statID = 0 WHERE Advertise.AdID= {}".format(ads[i]['AdID']))
+        else:
+            report = execute_update_query("UPDATE Business SET IsActive = {} WHERE UserID= {}".format(False, creator["CreatorID"]))
+            ads = execute_read_query(
+                "SELECT Advertise.AdID FROM Advertise WHERE Advertise.CreatorID={} AND UserMade=TRUE".format(creator["CreatorID"]),
+                True)
+            for i in range(len(ads)):
+                report_other_ads = execute_update_query(
+                    "UPDATE Advertise JOIN AdStatus ON AdStatus.AdID = Advertise.AdID SET statID = 0 WHERE AdID= {} AND UserMade=FALSE".format(
+                        ads[i]['AdID']))
         # print("whar??",report)
-        if report=='Done':
+        if report=='Done' and report_other_ads=='Done':
             # return 'Deactivate the User',204
-            print("deaciveted the user",user_id)
+            print("deaciveted the user",creator["CreatorID"])
             flash('Deactivated the User')
             return redirect(url_for('admin.admin_home'))
         else:
@@ -179,8 +203,7 @@ def deactive_user(adv_id):
 
 @admin.route('/check_ad/<int:adv_id>', methods=['GET', 'POST'])
 def check_ad(adv_id):
-    print("hello")
-    print('logged_in' in session and session['admin']);
+    # print('logged_in' in session and session['admin'])
     if 'logged_in' in session and session['admin']:
         if request.method == 'POST':
             print(adv_id)

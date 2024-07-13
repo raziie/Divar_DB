@@ -12,6 +12,23 @@ def advertise_detail(adv_id):
     if 'logged_in' in session and not session['admin']:
         execute_insert_query("INSERT INTO Visit (AdID, UserID) VALUES (%s, %s)", (adv_id, session['user']))
         advertise = execute_read_query("SELECT * FROM Advertise WHERE AdID={}".format(adv_id), False)
+        if advertise['UserMade']:
+            seller = execute_read_query("SELECT NormalUser.FirstName, NormalUser.LastName, NormalUser.Email, NormalUser.Phone "
+                                         "FROM NormalUser "
+                                         "WHERE NormalUser.UserID = {}".format(advertise['CreatorID']), False)
+            seller['name'] = seller['FirstName']+ " "+ seller['LastName']
+            seller['info'] = "Phone : " ''+ seller['Phone']
+        else:
+            seller = execute_read_query("SELECT Business.BusName,Business.City,Business.Street,Business.HouseNum "
+                                              "FROM divar.Business "
+                                              "WHERE Business.UserID = {}".format(advertise['CreatorID']), False)
+            seller['name'] = seller['BusName']
+            if not seller['Street']:
+                seller['Street']= " "
+            if not seller['HouseNum']:
+                seller['HouseNum']= " "
+                seller['info'] = "Address : " '' + seller['City']+ seller['Street']+ seller['HouseNum']
+        print(advertise)
         advertise_images = execute_read_query("SELECT * FROM Images WHERE AdID={}".format(adv_id), True)
         advertise_images = images_path_handler(advertise_images)
         advertise['images'] = advertise_images
@@ -19,7 +36,7 @@ def advertise_detail(adv_id):
             flash('Advertise not Found')
             return redirect(url_for('market.home.html'))
 
-        return render_template('ads_detail.html', item=advertise, ad_images=advertise_images)
+        return render_template('ads_detail.html', item=advertise, ad_images=advertise_images, seller=seller)
     else:
         flash('Please sign up or login first')
         return redirect(url_for('market.index'))
@@ -36,10 +53,21 @@ def register_ad():
         add_status = ("INSERT INTO AdStatus (AdID, StatusComment, UpdatedAt, statID)"
                          "VALUES (%s, %s, %s, %s)")
         # TODO: NOT CHECKED
-        businesses = execute_read_query("SELECT * FROM Business WHERE UserID = {}".format(session['user']), True)
+        businesses = execute_read_query("SELECT Business.UserID,Business.BusName FROM Business WHERE UserID = {}".format(session['user']), True)
         print("business", businesses)
+        # print(type(businesses))
+        accounts = []
+        accounts.append({"name":"Personal Account","id":session['user']})
+        for i in range(len(businesses)):
+            acc ={"name": "Business: "+ businesses[i]['BusName'],"id":businesses[i]['UserID']}
+            # acc = {"name": businesses[i]['BusName']}
+            # acc = {}
+            print(acc)
+            accounts.append(acc)
 
+        print("accs",accounts)
         if request.method == 'POST':
+            ad_userid = handle_null_str(request.form['adAc'])
             ad_title = handle_null_str(request.form['adTitle'])
             ad_subtitle = handle_null_str(request.form['adSubTitle'])
             ad_description = handle_null_str(request.form['adDesc'])
@@ -93,7 +121,7 @@ def register_ad():
             cities = execute_read_query("SELECT City FROM Region", True)
             data = {'cities': cities, 'categories': categories}
             # return jsonify(data), 200
-            return render_template("registerAd.html", cities=cities, categories=categories)
+            return render_template("registerAd.html", cities=cities, categories=categories, accounts=accounts)
     else:
         # return 'please sign up first', 401
         flash('Please sign up or login first')

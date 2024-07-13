@@ -39,12 +39,15 @@ Detail
                             <p style="font-size: 2rem ;" class="p-2 card-text"><strong> Description: </strong> <small>
                                     {{item['Descriptions']}} </small></p>
                             {% endif %}
-                            <button type="button" class="m-4 btn btn-secondary btn-lg">
-                                <a href="#">Contact Seller</a>
-                            </button>
+<!--                            <button type="button" class="m-4 btn btn-secondary btn-lg">-->
+<!--                                <a href="#">Contact Seller</a>-->
+<!--                            </button>-->
                             <button type="button" class="m-4 btn btn-primary btn-lg">
                                 <a href="{{url_for('ad.report_ad', ad_id=item['AdID'])}}">Report Advertiser</a>
                             </button>
+                            <p style="font-size: 2rem ;" class="p-2 card-text"><strong> Seller: </strong></p>
+                            <p>{{seller['name']}}</p>
+                            <p>{{seller['info']}}</p>
                             <!--                    <button onclick="window.open('http://127.0.0.1:5000//reportAd','_blank')">Report Advertise</button>-->
                             <!--                    url_for('advertise_detail', adv_id=item[0])-->
                         </div>
