@@ -6,7 +6,7 @@ Home
 {% block content %}
 
 <div class="container mt-5">
-      <form class="row d-flex align-items-center justify-content-between my-form" role="search" method="post" action="{{url_for('admin.admin_home') }}  id="search-form">
+      <form class="row d-flex align-items-center justify-content-between my-form" role="search" method="post" action="{{url_for('admin.admin_home') }}"  id="search-form">
         <div class="form-group d-flex flex-row align-items-center col-lg-3">
             <select id="adCat" name="adCat" class="form-select my-2" required>
               {% for cat in ad_categories %}

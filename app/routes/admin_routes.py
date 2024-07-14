@@ -5,9 +5,6 @@ from app.mysql_db import *
 from app.routes.market_routes import elastic_client
 admin = Blueprint('admin', __name__)
 
-
-
-market = Blueprint('market', __name__)
 prev_page = 0
 
 def re_order_list(cat_id, cats):
@@ -300,6 +297,11 @@ def check_ad(adv_id):
 
             if modify_status_insertion=='Done' and status_insertion == 'Done':
                 # return 'Checked',204
+                advertise = execute_read_query("SELECT * FROM Advertise WHERE AdID={}".format(adv_id), False)
+                advertise['ImagePath'] = '0.png'
+                advertise['statID'] = '1'
+
+                elastic_client.update_create_doc(advertise)
                 flash('Status Changed')
                 return redirect(url_for('admin.admin_home'))
             else:

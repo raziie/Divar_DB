@@ -90,9 +90,11 @@
   {% if messages %}
   <ul class=flashes>
     {% for message in messages %}
-    <div class="alert alert-warning">
-      <button type="button" class="close" data-dismiss="alert">&times;</button>
-      {{ message }}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+        <strong class="mx-3">{{ message }}</strong>
+      </button>
     </div>
     {% endfor %}
   </ul>

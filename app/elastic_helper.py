@@ -125,6 +125,6 @@ def extract_query(searched_str, in_category, price_range, photo, is_admin):
     if len(query['query']['bool']['filter']) == 0:
         query = {'query': {'match_all': {}}, "from": 0, "size": 1000}
 
-    # print(query)
+    print(query)
 
     return query
