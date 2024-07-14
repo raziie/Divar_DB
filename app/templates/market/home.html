@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% block title %}
+Home
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+      <form class="row d-flex align-items-center justify-content-between my-form" role="search" method="post" action="{{url_for('market.home') }}"  id="search-form">
+        <div class="form-group d-flex flex-row align-items-center col-lg-3">
+            <select id="adCat" name="adCat" class="form-select my-2" required>
+              {% for cat in ad_categories %}
+              <option value="{{ cat['AdCatID'] }}">
+              {{ cat['Category'] }}</option>
+              {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group d-flex flex-row align-items-center col-lg-3">
+          <input type="number" class="form-control me-2" name="minPrice" id="minPrice" placeholder="min price" value="{{ form_data.minPrice }}">
+          <input type="number" class="form-control me-2" name="maxPrice" id="maxPrice" placeholder="max price" value="{{ form_data.maxPrice }}">
+        </div>
+
+        <div class="form-group form-check form-switch col-lg-2">
+          <input class="form-check-input" type="checkbox" id="photo" name="photo" value="*ads_imgs*" {% if form_data.photo %}checked{% endif %}/>
+          <label class="form-check-label" for="photo">Has image</label>
+        </div>
+
+          <!-- Hidden input for page number -->
+    <input type="hidden" class="my-hidden" name="page" id="page-input" value="{{ page }}">
+
+    <div class="form-group d-flex justify-content-center col-lg-3">
+
+      <input class="form-control me-2" value="{{ form_data.searchString }}" type="search" placeholder="Search"
+          name="searchString">
+        <button class="btn btn-outline-secondary" type="submit"><i class="fa fa-search"></i></button>
+      </div>
+      </form>
+</div>
+
+
+<div class="container">
+  <div class="row text-center d-flex align-items-center justify-content-center">
+    <h1 class="border-bottom display-5 m-5 w-50">Newest Items</h1>
+    <div class="row row-cols-1 row-cols-md-3 row-cols-xl-4 g-5 mt-0">
+      {% for item in items %}
+      <div class="col">
+        <a href="{{ url_for('ad.advertise_detail', adv_id=item['AdID']) }}">
+          <div class="card border-none h-100 overflow-hidden">
+            <img class="img-fluid" src="{{ url_for('static', filename=item['ImagePath']) }}" class="card-img-top"
+              alt="image" height="100px">
+            <div class="card-body">
+              <h5 class="card-title display-6">{{ item['Title'] }}</h5>
+              <p class="card-text">Price: <span class="me-2 text-danger">${{ item['Price'] }}</span></p>
+              <!--     goes to item details page      -->
+            </div>
+            <div class="card-footer">
+              <small class="text-body-secondary">Last updated {{item['DaysPast']}} days ago</small>
+            </div>
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<div class="container d-flex justify-content-center my-5">
+  <div class="row">
+    <nav>
+      <ul class="pagination">
+        {% if page > 1 %}
+        <li class="page-item">
+          <a class="page-link page-anchor prev" href="#" data-page="{{ page-1 }}" aria-label="Previous">
+            <span aria-hidden="true">&laquo; Previous</span>
+          </a>
+        </li>
+        <li class="page-item">
+          <a class="page-link page-anchor" href="#" data-page="{{ page-1 }}">{{ page-1 }}</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+          <a class="page-link prev" href="#" aria-label="Previous">
+            <span aria-hidden="true">&laquo; Previous</span>
+          </a>
+        </li>
+        <li class="page-item disabled">
+          <a class="page-link" href="#">{{ page-1 }}</a>
+        </li>
+        {% endif %}
+
+        <li class="page-item active">
+          <a class="page-link" href="#">{{ page }}</a>
+        </li>
+
+        {% if page < total_pages %}
+        <li class="page-item">
+          <a class="page-link page-anchor" href="#" data-page="{{ page+1 }}">{{ page+1 }}</a>
+        </li>
+        <li class="page-item">
+          <a class="page-link page-anchor next" href="#" data-page="{{ page+1 }}" aria-label="Next">
+            <span aria-hidden="true">Next &raquo;</span>
+          </a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+          <a class="page-link" href="#">{{ page+1 }}</a>
+        </li>
+        <li class="page-item disabled">
+          <a class="page-link next" href="#" aria-label="Next">
+            <span aria-hidden="true">Next &raquo;</span>
+          </a>
+        </li>
+        {% endif %}
+      </ul>
+    </nav>
+  </div>
+</div>
+
+<script>
+   // Handle pagination link clicks
+    $('.page-link').on("click",function(event){
+        event.preventDefault(); // Prevent default link behavior
+        var page = $(this).attr("data-page");  // Get the page number from data-page attribute
+        $('.my-hidden').val(page); // Set the hidden input value to the clicked page number
+        $('.my-form').submit(); // Submit the form
+    });
+
+</script>
+
+{% endblock %}

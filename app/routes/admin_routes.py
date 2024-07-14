@@ -6,6 +6,7 @@ from app.routes.market_routes import elastic_client
 admin = Blueprint('admin', __name__)
 
 
+
 market = Blueprint('market', __name__)
 prev_page = 0
 
