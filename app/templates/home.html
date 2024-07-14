@@ -4,17 +4,40 @@ Home
 {% endblock %}
 
 {% block content %}
+
 <div class="container mt-5">
-  <div class="row d-flex align-items-center justify-content-center">
-    <div class="col-10 col-lg-5">
-      <form class="d-flex" role="search" method="post" action="{{url_for('market.home') }}">
-        <input class="form-control me-2" value="{{ request.form['searchString'] }}" type="search" placeholder="Search"
+      <form class="row d-flex align-items-center justify-content-between" role="search" method="post" action="{{url_for('market.home') }}"  id="search-form">
+        <div class="form-group d-flex flex-row align-items-center col-lg-3">
+            <select id="adCat" name="adCat" class="form-select my-2" required>
+              <option disabled selected>category</option>
+              {% for cat in ad_categories %}
+              <option value="{{ cat['AdCatID'] }}">{{ cat['Category'] }}</option>
+              {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group d-flex flex-row align-items-center col-lg-3">
+          <input type="number" class="form-control me-2" name="minPrice" id="minPrice" placeholder="min price" value="{{ request.form['minPrice'] }}">
+          <input type="number" class="form-control me-2" name="maxPrice" id="maxPrice" placeholder="max price" value="{{ request.form['maxPrice'] }}">
+        </div>
+
+        <div class="form-group form-check form-switch col-lg-2">
+          <input class="form-check-input" type="checkbox" id="photo" name="photo" value="*ads_imgs*"/>
+          <label class="form-check-label" for="photo">Has image</label>
+        </div>
+
+          <!-- Hidden input for page number -->
+    <input type="hidden" name="page" id="page-input" value="{{ page }}">
+        
+    <div class="form-group d-flex justify-content-center col-lg-3">
+      
+      <input class="form-control me-2" value="{{ request.form['searchString'] }}" type="search" placeholder="Search"
           name="searchString">
-        <button class="btn btn-outline-secondary" type="submit">Search</button>
+        <button class="btn btn-outline-secondary" type="submit"><i class="fa fa-search"></i></button>
+      </div>
       </form>
-    </div>
-  </div>
 </div>
+
 
 <div class="container">
   <div class="row text-center d-flex align-items-center justify-content-center">
