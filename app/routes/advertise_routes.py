@@ -27,7 +27,7 @@ def advertise_detail(adv_id):
                 seller['Street']= " "
             if not seller['HouseNum']:
                 seller['HouseNum']= " "
-                seller['info'] = "Address : " '' + seller['City']+ seller['Street']+ seller['HouseNum']
+            seller['info'] = "Address : " '' + seller['City']+ seller['Street']+ seller['HouseNum']
         print(advertise)
         advertise_images = execute_read_query("SELECT * FROM Images WHERE AdID={}".format(adv_id), True)
         advertise_images = images_path_handler(advertise_images)
