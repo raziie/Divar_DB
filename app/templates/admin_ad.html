@@ -4,57 +4,43 @@ Detail
 {% endblock %}
 
 {% block content %}
-<main>
-    <section class="py-5 text-center container">
-        <div id="carouselExample" class="carousel slide">
-            <div class="carousel-inner">
-                {% for image in ad_images %}
-                <div class="carousel-item active">
-                    <img src="{{ url_for('static', filename=image['ImagePath']) }}" class="d-block w-100" alt="advertise image">
+<main class="px-lg-5 mx-lg-5">
+    <section class="d-flex text-center text-lg-start justify-content-center m-5 p-5">
+        <div class="card mb-3 border-none">
+            <div class="row p-4">
+                <div class="col-12 col-lg-6">
+                    <swiper-container style="height: 500px;" space-between="30" pagination="true"
+                        pagination-clickable="true">
+                        {% for image in ad_images %}
+                        <swiper-slide class="d-flex justify-content-center rounded">
+                            <img class="h-100 rounded" src="{{ url_for('static', filename=image['ImagePath']) }}"
+                                alt="ad img">
+                        </swiper-slide>
+                        {% endfor %}
+                    </swiper-container>
                 </div>
-                {% endfor %}
-            </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-            </button>
-        </div>
-        <div class="container text-center">
-            <!-- Stack the columns on mobile by making one full-width and the other half-width -->
-            <div class="row">
-                <div class="col-6 col-md-12">
-                    <div class="card " style="min-height: 100%;">
-                        <h1 style="font-size: 3rem ;font-weight: bold; width: 100%;" class=" title p-3 bg-secondary">
-                            {{ item['Title'] }}
-                        </h1>
-                        <div class="card-body p-3">
-                            <p style="font-size: 2rem ;" class="p-2 card-text"><strong> Price: </strong> {{item['Price']}}
+                <div class="col-12 col-lg-6">
+                    <div class="card h-100 border-none">
+                        <div class="card-body d-flex flex-column justify-content-around">
+                            <h1 class="h1 card-title">
+                                {{ item['Title'] }}
+                            </h1>
+                            <p class="card-text"><strong> Price: </strong>
+                                <small class="text-danger">{{item['Price']}}</small>
                             </p>
 
                             {% if item[6] %}
-                            <p style="font-size: 2rem ;" class="p-2 card-text"><strong> Description: </strong> <small>
-                                    {{item['Descriptions']}} </small></p>
+                            <p class="card-text">
+                                <strong> Description: </strong>
+                                <small> {{item['Descriptions']}} </small>
+                            </p>
                             {% endif %}
-                            <button type="button" class="m-4 btn btn-secondary btn-lg">
-                                <a href="{{url_for('admin.check_ad', adv_id=item['AdID'])}}">Checking Advertise</a>
-                            </button>
-                            <button type="button" class="m-4 btn btn-primary btn-lg">
-<!--                                      wrong url incomplete-->
-                                <a href="{{url_for('admin.get_reports', adv_id=item['AdID'])}}">Reports</a>
-                            </button>
-<!--                            <button type="button" class="m-4 btn btn-primary btn-lg">-->
-                                <!--      wrong url incomplete                          -->
-<!--                                <a href="{{url_for('admin.delete_advertise', adv_id=item['AdID'])}}">Delete Advertise</a>-->
-<!--                            </button>-->
-<!--                            <button type="button" class="m-4 btn btn-primary btn-lg">-->
-<!--                                <a href="{{url_for('admin.deactive_user', adv_id=item['AdID'])}}">Deactivate User</a>-->
-<!--                            </button>-->
-                            <!--                    <button onclick="window.open('http://127.0.0.1:5000//reportAd','_blank')">Report Advertise</button>-->
-                            <!--                    url_for('advertise_detail', adv_id=item[0])-->
+
+                            <a class="card-link" href="{{url_for('admin.check_ad', adv_id=item['AdID'])}}">Checking
+                                Advertise</a>
+                            <a class="card-link"
+                                href="{{url_for('admin.get_reports', adv_id=item['AdID'])}}">Reports</a>
+
                         </div>
                     </div>
                 </div>

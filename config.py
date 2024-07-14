@@ -14,3 +14,4 @@ class Config:
     MYSQL_DATABASE = 'Divar'
     REDIS_PASSWORD = os.getenv('REDIS_PASS')
     # 'redis://localhost:6379/0'
+    ELASTIC_PASS = os.getenv('ELASTIC_PASS')

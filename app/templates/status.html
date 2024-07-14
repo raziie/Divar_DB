@@ -4,12 +4,6 @@ Checking Advertises Status
 {% endblock %}
 
 {% block content %}
-<form class="d-flex" role="search" method="post" action="{{ url_for('market.home') }}">
-  <input class="form-control me-2" value="{{ request.form['searchString'] }}" type="search" placeholder="Search"
-    name="searchString">
-  <button class="btn btn-outline-success" type="submit">Search</button>
-</form>
-
 <div class="container">
   <div class="row">
     <h1 class="display-4 m-5">Advertise Status</h1>
@@ -18,10 +12,11 @@ Checking Advertises Status
       <div class="col">
         <div class="card h-100">
           <div class="card-body">
-            <h5 class="card-title display-6">Status: {{ ad['status'] }}</h5>
+            <h3 class="card-title display-6">Title: {{ ad['Title'] }}</h3>
+              <h5 class="card-title display-6">Status: {{ ad['status'] }}</h5>
               <p class="card-text">Status Comment: {{ ad['StatusComment'] }}</p>
             <p class="card-text">Visits: {{ ad['visits'] }}</p>
-            <!--     goes to item details page      -->
+
           </div>
 
           <div class="card-footer">

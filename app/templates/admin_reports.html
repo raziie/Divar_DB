@@ -4,11 +4,6 @@ Home
 {% endblock %}
 
 {% block content %}
-<form class="d-flex" role="search" method="post" action="{{url_for('admin.get_reports',adv_id=AdID) }}">
-  <input class="form-control me-2" value="{{ request.form['searchString'] }}" type="search" placeholder="Search"
-    name="searchString">
-  <button class="btn btn-outline-success" type="submit">Search</button>
-</form>
 
 <div class="container">
   <div class="row">

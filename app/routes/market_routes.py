@@ -1,9 +1,23 @@
 from flask import render_template, request, url_for, flash, redirect, session, Blueprint
-import datetime
 from app.input_handler import *
 from app.mysql_db import *
+from app.elastic_helper import ElasticSearchDB
 
+elastic_client = ElasticSearchDB()
 market = Blueprint('market', __name__)
+prev_page = 0
+
+def re_order_list(cat_id, cats):
+    the_cat = {}
+    the_cat_index = 0
+    for t in range(len(cats)):
+        if cats[t]['AdCatID'] == cat_id:
+            the_cat_index = t
+            break
+    the_cat = cats[the_cat_index]
+    cats.pop(the_cat_index)
+    cats.insert(0, the_cat)
+    return cats
 
 
 # checked by m
@@ -12,46 +26,69 @@ def index():
     return render_template("market/index.html")
 
 
-# changedx
 @market.route("/home/", methods=['GET', 'POST'])
 def home():
-    # TODO: filter advertises
-    if 'logged_in' in session:
-        recent_ads = execute_read_query("SELECT DISTINCT(Advertise.AdID), AdCatID, Title,"
-                                        "Price, Descriptions, Subtitle, City, Street, HouseNum, CreatedAt"
-                                        " ,Images.ImagePath FROM divar.Advertise JOIN divar.Images "
-                                        "ON Advertise.AdID = Images.AdID Order BY CreatedAt DESC", True)
+    global elastic_client, last_search, prev_page
+    if 'logged_in' in session and not session['admin']:
+        categories = execute_read_query("SELECT * FROM AdCat", True)
 
-        if request.method == 'POST':
+        categories.insert(0, {'AdCatID': -1, 'Category': 'all'})
+        print('fffffffffffffffffffff')
+        form_data = {'page': 1, 'searchString': '', 'adCat': -1, 'minPrice': 0, 'maxPrice': 1000000000, 'photo': ''}
+        if request.method == 'GET':
+            page = 1
+            recent_ads = elastic_client.search_query(searched_str='', category=-1,
+                                                     price_range=(None, None), photo='', is_admin=False)
+
+        elif request.method == 'POST':
+            page = handle_null_int(request.form['page'])
+            print('form page:', page)
             searched = str(request.form['searchString'])
-            print(searched)
-            recent_ads = execute_read_query("SELECT DISTINCT(Advertise.AdID), AdCatID, Title, Price, "
-                                            "Descriptions, Subtitle, City, Street, HouseNum, CreatedAt,"
-                                            "Images.ImagePath  FROM divar.Advertise JOIN divar.Images "
-                                            "ON Advertise.AdID = Images.AdID "
-                                            "WHERE Advertise.Title LIKE '%{}%'"
-                                            "Order BY CreatedAt DESC".format(searched), True)
+            ads_category = handle_null_int(request.form['adCat'])
+            ads_price_min = handle_null_float(request.form['minPrice'])
+            ads_price_max = handle_null_float(request.form['maxPrice'])
+            ads_photo = ''
+            if 'photo' in request.form.keys():
+                ads_photo = handle_null_str(request.form['photo'])
 
-        for i in range(len(recent_ads)):
-            delta = datetime.datetime.now() - recent_ads[i]['CreatedAt']
-            recent_ads[i]['DaysPast'] = delta.days
+            if ads_category != -1:
+                categories = re_order_list(ads_category, categories)
+            form_data = request.form
+            print(ads_category, (ads_price_min, ads_price_max), ads_photo)
+            recent_ads = elastic_client.search_query(searched_str=searched, category=ads_category,
+                                                     price_range=(ads_price_min, ads_price_max),
+                                                     photo=ads_photo, is_admin=False)
 
-        page = request.args.get('page', 1, type=int)
+            print('recent ads in form:\n', recent_ads)
+
+
+
         per_page = 12
         start = (page - 1) * per_page
         end = start + per_page
+        print(recent_ads)
         total_pages = (len(recent_ads) + per_page - 1) // per_page
         items_on_page = recent_ads[start:end]
-        data = { 'items': items_on_page}
-        sending = {'data':data,'total_pages':total_pages,'page':page}
-        print(recent_ads)
-        if data is None:
-            # return "Nothing Found",404
+        # print(recent_ads)
+
+        if items_on_page is None:
             flash('Nothing Found')
-            return redirect(url_for('market.home'))
-        # return jsonify(sending),200
-        return render_template('home.html', items=items_on_page, total_pages=total_pages, page=page)
-        # return sending,200
+            print('555ff', page)
+            prev_page = page
+            return render_template('market/home.html', items=None, total_pages=1,
+                               page=1, ad_categories=categories, form_data=form_data)
+
+        if page != prev_page:
+            prev_page = page
+            print('1fff', page)
+            return render_template('market/home.html', items=items_on_page, total_pages=total_pages,
+                                   page=page, ad_categories=categories, form_data=form_data)
+
+        print('fudd', page)
+        prev_page = page
+        return render_template('market/home.html', items=items_on_page, total_pages=total_pages,
+                               page=page, ad_categories=categories, form_data=form_data)
+
     else:
         flash('Please sign up or login first')
         return redirect(url_for('market.index'))

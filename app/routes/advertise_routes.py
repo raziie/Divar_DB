@@ -4,7 +4,7 @@ from app.input_handler import *
 from app.mysql_db import *
 
 ad = Blueprint('ad', __name__)
-
+from app.routes.market_routes import elastic_client
 
 # checked by m
 @ad.route('/detail/<int:adv_id>', methods=['GET'])
@@ -98,6 +98,8 @@ def register_ad():
                 ad_insertion, ad_id = execute_insert_query(add_advertise, data_n_ad)
                 data_status = (ad_id, " ", datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 3)
                 status_insertion, status_id = execute_insert_query(add_status, data_status)
+                recent_ad = {'AdID': ad_id,'Title': ad_title,'Price': ad_price,'AdCatID': ad_cat,'DaysPast': 0,'ImagePath': '0.png','statID': 3}
+                elastic_client.update_create_doc(recent_ad)
                 print("a", ad_insertion)
                 print("b", status_insertion)
                 # TODO: IT HAS "Not all parameters were used in the SQL statement" ERROR FOR status_insertion
